@@ -1,160 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Benthic Docs</title>
-<style>
-body {
-  margin: 0;
-  font-family: sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(#161f63 70%, #0c1552 100% );
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benthic Docs</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(#161f63 70%, #0c1552 100%);
+    }
 
-.navbar {
-  background-color: #4956ba;
-  color: 161f63;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 250px;
-  height: 100%;
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-  transform: translateX(-250px); /* hidden by default */
-  transition: transform 0.3s ease;
-  z-index: 1000;
-  box-shadow: 4px 0 15px rgba(0,0,0,0.3);
-background-image: url(data:image/png;base64,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);
+    .navbar {
+      background-color: #4956ba;
+      color: 161f63;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-250px);
+      /* hidden by default */
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+      background-image: url(data:image/png;base64,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);
 
-}
-.parent {
-  border: 1px solid;
-  width: 20vh;
-  height: 20vh;
-  overflow: hidden;
-  display: flex;
-}
+    }
 
-.logo img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-}
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 30px;
-  height: 100px;
+    .parent {
+      border: 1px solid;
+      width: 20vh;
+      height: 20vh;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .logo img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 30px;
+      height: 100px;
+    }
 
 
-}
 
-.menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-.menu li a {
-  color: #ffcc55;
-  text-decoration: none;
-  padding: 15px 20px;
-  display: block;
-  font-weight: bold;
-}
+    a:visited {
+      color: inherit;
+    }
 
-/* Hamburger button */
-.hamburger {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  font-size: 1.8rem;
-  cursor: pointer;
-  color: #515bac;
-  z-index: 1100;
-  transition: left 0.3s ease; /* smooth slide with sidebar */
-}
-.content {
-  padding: 20px;
-  margin-left: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+    a:hover,
+    a:focus {
+      color: inherit;
+      text-decoration: none;
+    }
 
-.bubble {
-  background-color: #161f63
-  backdrop-filter: blur(8px); /* frosted glass effect */
-  border-radius: 25px;
-  padding: 30px;
+    a.contrast_link,
+    a.contrast_link:visited,
+    a.contrast_link:hover,
+    a.contrast_link:focus {
+      color: #ffcc55;
+      font-weight: bold;
+      text-decoration: none;
+    }
 
-  color: white;
-}
-#toggle {
-  display: none;
-}
+    h1 {
+      font-weight: bold;
+      color: #ffcc55;
+    }
 
-/* Slide sidebar open on mobile */
-#toggle:checked ~ .navbar {
-  transform: translateX(0);
-}
+    h2 {
+      font-weight: bold;
+      color: #ffcc55;
+    }
 
-/* Slide hamburger with sidebar */
-#toggle:checked + .hamburger {
-  left: 265px; /* sidebar width + 15px spacing */
-}
+    code {
+      color: #ffcc55;
+      background-color: #515bac;
+      padding: 3px 5px;
+      font-size: .9rem;
+    }
 
-/* Page content wrapper */
-.content {
-  padding: 20px;
-  transition: margin-left 0.3s ease;
-  margin-left: 0; /* default for mobile */
-}
+    pre {
+      background-color: #515bac;
+      color: #ffcc55;
+      padding: 15px 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+      font-family: monospace;
+      line-height: 1.5;
+      font-size: .9rem;
+      white-space: pre;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
 
-/* Desktop: push content and hide toggle */
-@media (min-width: 769px) {
-  .navbar {
-    transform: translateX(0); /* sidebar always visible */
-  }
-  .hamburger {
-    display: none; /* hide toggle on desktop */
-  }
-  .content {
-    margin-left: 250px; /* push content to the right */
-  }
-}
+    .menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
 
-</style>
+    .menu li a {
+      color: #ffcc55;
+      text-decoration: none;
+      padding: 15px 20px;
+      display: block;
+      font-weight: bold;
+    }
+
+    .hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #515bac;
+      z-index: 1100;
+      transition: left 0.3s ease;
+      /* smooth slide with sidebar */
+    }
+
+    .content {
+      padding: 20px;
+      margin-left: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .contrast_bubble {
+      background-color: #d1a847;
+      backdrop-filter: blur(8px);
+      border-radius: 25px;
+      padding: 20px;
+      color: #0c1552;
+
+    }
+
+    .contrast_bubble h1 {
+      color: #0c1552
+    }
+
+    .contrast_bubble_small {
+      background-color: #d1a847;
+      /* semi-transparent yellow */
+      backdrop-filter: blur(8px);
+      border-radius: 25px;
+      padding: 10px 20px;
+      color: #0c1552;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+
+    .bubble {
+      background-color: #0c1552;
+      backdrop-filter: blur(8px);
+      border-radius: 25px;
+      padding: 20px;
+      color: white;
+    }
+
+    hr {
+      border: none;
+      height: 2px;
+      background-color: #ffcc55;
+      width: 90%;
+      margin: 40px auto;
+      border-radius: 2px;
+      opacity: 0.8;
+    }
+
+    #toggle {
+      display: none;
+    }
+
+    /* Slide sidebar open on mobile */
+    #toggle:checked~.navbar {
+      transform: translateX(0);
+    }
+
+    /* Slide hamburger with sidebar */
+    #toggle:checked+.hamburger {
+      left: 265px;
+      /* sidebar width + 15px spacing */
+    }
+
+    /* Page content wrapper */
+    .content {
+      padding: 20px;
+      transition: margin-left 0.3s ease;
+      margin-left: 0;
+      /* default for mobile */
+    }
+
+    .bubble-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    /* Each bubble should flex nicely in a row */
+    .bubble-row .bubble,
+    .bubble-row .contrast_bubble {
+      flex: 1 1 250px;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    /* Stack vertically on small screens */
+    @media (max-width: 700px) {
+      .bubble-row {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .bubble-row .bubble,
+      .bubble-row .contrast_bubble {
+        width: 100%;
+        max-width: 500px;
+      }
+    }
+
+    /* Desktop: push content and hide toggle */
+    @media (min-width: 769px) {
+      .navbar {
+        transform: translateX(0);
+        /* sidebar always visible */
+      }
+
+      .hamburger {
+        display: none;
+        /* hide toggle on desktop */
+      }
+
+      .content {
+        margin-left: 250px;
+        /* push content to the right */
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<input type="checkbox" id="toggle">
-<label for="toggle" class="hamburger">☰</label>
+  <input type="checkbox" id="toggle">
+  <label for="toggle" class="hamburger">☰</label>
 
-<nav class="navbar">
-  <div class="logo">
-    <a href="/">
-      <img  src="{{ 'images/benthic_round.svg' | relative_url }}" alt="Benthic Logo" width="200" height="200"></div>
+  <nav class="navbar">
+    <div class="logo">
+      <a href="/">
+        <img src="{{ 'images/benthic_round.svg' | relative_url }}" alt="Benthic Logo" width="200" height="200">
+    </div>
     </a>
-  <ul class="menu">
-    <li><a href="/">Home</a></li>
-    <li><a href="/about">About</a></li>
-    <li><a href="/protocol">Protocol</a></li>
-    <li><a href="/rendering">Rendering</a></li>
-  </ul>
-</nav>
+    <ul class="menu">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/protocol">Protocol</a></li>
+      <li><a href="/rendering">Rendering</a></li>
+    </ul>
+  </nav>
 
-<div class="content">
-      {{ content }}
-</div>
+  <div class="content">
+    {{ content }}
+  </div>
 
 </body>
-</html>
 
+</html>
