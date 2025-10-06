@@ -262,6 +262,45 @@
         /* push content to the right */
       }
     }
+
+    .site-footer {
+      background-color: #0c1552;
+      color: #ffcc55;
+      text-align: center;
+      padding: 15px 20px;
+      font-size: 0.9rem;
+      position: relative;
+      bottom: 0;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* Desktop: push footer to the right of sidebar */
+    @media (min-width: 769px) {
+      .site-footer {
+        margin-left: 250px;
+        /* push footer beside sidebar */
+      }
+    }
+
+    .site-footer a {
+      color: #ffcc55;
+      text-decoration: underline;
+    }
+
+    .site-footer a:hover {
+      color: #d1a847;
+    }
+
+    /* Ensure footer is always below content on short pages */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .content {
+      flex: 1;
+    }
   </style>
 </head>
 
@@ -289,5 +328,21 @@
   </div>
 
 </body>
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <span>Content published under <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0
+        License</a></span>
+    <span> | Contact: <a href="mailto:wgahnagl@protonmail.com">wgahnagl@protonmail.com</a></span>
+    <br>
+    <span> <a href="wiki.secondlife.com">Secondlife Wiki</a> </span>
+    <span>| <a href="opensimulator.org">OpenSimulator Wiki</a></span>
+    </span>
+  </div>
+</footer>
+
+<style>
+
+</style>
 
 </html>
