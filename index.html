@@ -20,27 +20,30 @@ title: Main
     information.</p>
 </div>
 
-<div class="bubble-row">
-  <div class="bubble">
-    <h2>Async</h2>
-    <p>Benthic is entirely asyncronous, using the actix actor framework for message sending and receiving.</p>
-  </div>
+<div class="wavy_bubble" style="padding-top:60px;">
+  <div class="bubble-row">
+    <div class="bubble">
+      <h2>Async</h2>
+      <p>Benthic is entirely asyncronous, using the actix actor framework for message sending and receiving.</p>
+    </div>
 
-  <div class="bubble">
-    <h2>Open Standards</h2>
-    <p>This project aims to be fully compatable with all existing open metaverse standards, while working to streamline
-      the adoption of more modern ones.</p>
-  </div>
-  <div class="bubble">
-    <h2>Extensible</h2>
-    <p>Benthic's goal is for any component to be usable by any project, in any language. Messages are sent between
-      components using open formats, allowing your project to implement only what it needs. </p>
-  </div>
+    <div class="bubble">
+      <h2>Open Standards</h2>
+      <p>This project aims to be fully compatable with all existing open metaverse standards, while working to
+        streamline
+        the adoption of more modern ones.</p>
+    </div>
+    <div class="bubble">
+      <h2>Extensible</h2>
+      <p>Benthic's goal is for any component to be usable by any project, in any language. Messages are sent between
+        components using open formats, allowing your project to implement only what it needs. </p>
+    </div>
 
-  <div class="bubble">
-    <h2 class="contrast_header">Modular</h2>
-    <p>Using rust's feature capabilties, you can compile only the parts of the project you need. Building a metaverse
-      chat app? You can use only the parts of the library that you need.</p>
+    <div class="bubble">
+      <h2 class="contrast_header">Modular</h2>
+      <p>Using rust's feature capabilties, you can compile only the parts of the project you need. Building a metaverse
+        chat app? You can use only the parts of the library that you need.</p>
+    </div>
   </div>
 </div>
 
@@ -79,12 +82,12 @@ title: Main
   <br>
   The recommended project layout for developing looks like this:
   <pre><code>
-      benthic_project/
-      ├── metaverse_client/
-      ├── metaverse_gltf/
-      └── benthic_viewer/
-      OpenSimulator
-      └── bin/
+benthic_project/
+  ├── metaverse_client/
+  ├── metaverse_gltf/
+  └── benthic_viewer/
+OpenSimulator
+  └── bin/
     </code></pre>
 
   In order to test the project live, an instance of OpenSimulator must be running. Download the software <a
@@ -97,14 +100,16 @@ title: Main
   Each crate within metaverse_client has its own depenencies, and can be built and tested independently from each other.
   When building and testing locally, make sure that your local dependencies are specified in the Cargo.yaml, and not the
   release version.
+
+
   <pre><code>
-      [dependencies]
-      metaverse_messages = {path = "../messages/"}
-      metaverse_environment = {path = "../environment/"}
-      metaverse_agent = {path = "../agent/"}
-      metaverse_inventory = {path = "../inventory/"}
-      metaverse_gltf = {path = "../../../metaverse_gltf/"}
-      // more dependencies ...
+[dependencies]
+  metaverse_messages = {path = "../messages/"}
+  metaverse_environment = {path = "../environment/"}
+  metaverse_agent = {path = "../agent/"}
+  metaverse_inventory = {path = "../inventory/"}
+  metaverse_gltf = {path = "../../../metaverse_gltf/"}
+  // more dependencies ...
     </code></pre>
   Metaverse_client contains a debug UI, and can be run as a standalone project using
   <pre><code>cargo run</code></pre>

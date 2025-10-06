@@ -1,0 +1,186 @@
+---
+layout: default
+title: Capabilities
+---
+
+<div class="bubble">
+  <h1>Capabilities</h1>
+  <p>
+    In order for open metaverse servers to serve custom content without having
+    to alter the spec, servers have created a system called
+    <a href="https://wiki.secondlife.com/wiki/Capabilities">Capabilities.</a>
+    <br />
+    These capabilities are used for a large portion of server-client
+    communication.
+  </p>
+  <div class="bubble-row">
+    <div class="contrast_bubble_small">
+      <h3>1.</h3>
+      Send capability request to the server
+    </div>
+    <div class="contrast_bubble_small">
+      <h3>2.</h3>
+      Retrieve capability URL
+    </div>
+    <div class="contrast_bubble_small">
+      <h3>3.</h3>
+      Send and receive requests at that URL
+    </div>
+  </div>
+  {% capture Endpoints %}
+  <h2>Endpoints</h2>
+  Over the years, endpoints have been created and fallen out of use. Currently,
+  most documentation lists several unused endpoints. These endpoints are used by
+  the project and are known to work.
+  <table>
+    <tr>
+      <td>ViewerAsset</td>
+      <td>Enables the viewer to retrieve assets from the asset server</td>
+    </tr>
+    <tr>
+      <td>FetchInventoryDescendents2</td>
+      <td>Enable the viewer to retrieve the inventory of the current user.</td>
+    </tr>
+    <tr>
+      <td>FetchLibDescendents2</td>
+      <td>
+        Enable the viewer to retrieve the library inventory, to retrieve the
+        inventory of other users.
+      </td>
+    </tr>
+  </table>
+  {% endcapture %} {% include evil_benthic.html content=Endpoints %}
+</div>
+<div class="bubble">
+  <h1>Initialization</h1>
+  Once a session is established, capabilitities should be enabled.
+  <br />
+  <a
+    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L201"
+    >Here</a
+  >, immediately after login, the session initialization code requests
+  capabilities to be enabled based on the enabled features.
+  <br />
+
+  <a
+    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/capabilities.rs#L62"
+  >
+    new_capability_request()
+  </a>
+  generates the LLSD XML that will be sent to the server to enable the listed
+  endpoints. The resulting XML will look like this for example.
+  <pre><code>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;llsd&gt;
+  &lt;array&gt;
+    &lt;string&gt;ViewerAsset&lt;/string&gt;
+    &lt;string&gt;FetchLibDescendents2&lt;/string&gt;
+    &lt;string&gt;FetchInventoryDescendents2&lt;/string&gt;
+  &lt;/array&gt;
+&lt;/llsd&gt;
+</code></pre>
+  <p>
+    LLSD-XML is a custom xml format used by secondlife and open metaverse
+    applications. Docs for it can be found
+    <a href="https://wiki.secondlife.com/wiki/LLSD#XML_Serialization">here</a>.
+  </p>
+  The CapabilityRequest is then sent to the
+  <a
+    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L24"
+    >mailbox</a
+  >
+  to enable.
+  <div class="bubble-column">
+    <div class="contrast_bubble_small">
+      <h2>1.</h2>
+      <p>
+        The
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L135"
+          >Seed Capability URL</a
+        >
+        is retrieved from the LoginResponse object and saved in the session.
+      </p>
+    </div>
+    <div class="contrast_bubble_small">
+      <h2>2.</h2>
+      <p>
+        The requested capabilities are
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/capabilities.rs#L62"
+        >
+          serialized into LLSD-XML</a
+        >
+        for transport
+      </p>
+    </div>
+    <div class="contrast_bubble_small">
+      <h2>3.</h2>
+      <p>
+        The capabilities are
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L34"
+          >sent to the seed capability URL</a
+        >
+        using a Post, with the body being the LLSD-XML content
+      </p>
+    </div>
+    <div class="contrast_bubble_small">
+      <h2>4</h2>
+      <p>
+        The requested URLs are returned in the
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L41"
+          >response</a
+        >. These URLs will be used for making requests.
+      </p>
+    </div>
+  </div>
+  The response will look like this.
+  <pre><code>
+&lt;llsd&gt;
+  &lt;map&gt;
+    &lt;key&gt;FetchLibDescendents2&lt;/key&gt;
+    &lt;string&gt;http://172.20.20.20:9000/491d7ad3-ecbf-497c-90e6-abcaba76277c&lt;/string&gt;
+    &lt;key&gt;FetchInventoryDescendents2&lt;/key&gt;
+    &lt;string&gt;http://172.20.20.20:9000/c2afbf94-99da-46d3-b046-8bea0df7a845&lt;/string&gt;
+    &lt;key&gt;ViewerAsset&lt;/key&gt;
+    &lt;string&gt;http://172.20.20.20:9000/8a578194-bd25-43a5-83e5-6b16bf34291d&lt;/string&gt;
+  &lt;/map&gt;
+&lt;/llsd&gt;
+</code></pre>
+</div>
+
+<div class="bubble">
+  <h1>Making Requests</h1>
+  Now that we have the capability URLs, we can begin making requests to them.
+  <br />
+  For example, this is the rquest to retrieve a folder from the inventory
+  endpoint.
+  <pre><code>
+Post: http://172.20.20.20:9000/371320f6-7694-4e9c-bbb9-19e56f1e1027
+Header: "Content-Type", "application/llsd+xml
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;llsd&gt;
+  &lt;map&gt;
+    &lt;key&gt;folders&lt;/key&gt;
+    &lt;array&gt;
+      &lt;map&gt;
+        &lt;key&gt;fetch_folders&lt;/key&gt;
+        &lt;boolean&gt;true&lt;/boolean&gt;
+        &lt;key&gt;fetch_items&lt;/key&gt;
+        &lt;boolean&gt;true&lt;/boolean&gt;
+        &lt;key&gt;folder_id&lt;/key&gt;
+        &lt;uuid&gt;5b70e16b-4e8c-e463-f9b5-16e28f1b7213&lt;/uuid&gt;
+        &lt;key&gt;sort_order&lt;/key&gt;
+        &lt;integer&gt;0&lt;/integer&gt;
+        &lt;key&gt;owner_id&lt;/key&gt;
+        &lt;uuid&gt;fb2e5541-66ba-4019-a5de-e8b9286b0914&lt;/uuid&gt;
+      &lt;/map&gt;
+    &lt;/array&gt;
+  &lt;/map&gt;
+&lt;/llsd&gt;
+</code></pre>
+  The Not all endpoints will return XML. Be sure to know which encoding your
+  endpoint uses.
+</div>

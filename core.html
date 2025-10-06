@@ -1,0 +1,157 @@
+---
+layout: default
+title: Core
+---
+
+<div class="bubble">
+  <h1>Core & UI</h1>
+  <p>In order to create a viewer project, you need to establish a pathway between the user's UI, and the server the
+    virtual world is running on.
+    <br> One of the core design decisions about the benthic project was that the UI should be
+    completely independent from the business logic of the project, and it should be possible for developers to easily
+    swap out UI frameworks without much difficulty. Doing it this way has created three discrete layers in the benthic
+    project.
+  <div class="bubble-column" style="max-width: 1100px;">
+    <div class="contrast_bubble_small">
+      <h2>User Interface</h2>
+      The front end, which users can interact with. All this does is receive user input, and display the output
+      it receives from the core.
+    </div>
+    <div class="contrast_bubble_small">
+      <h2>Core</h2>
+      The asyncronous runtime logic of the program. This handles all of the communication between the UI and the server,
+      the parsing and manipulating of server data, and sending messages to the UI to display. The majority of the
+      project lives here.
+    </div>
+    <div class="contrast_bubble_small">
+      <h2>Server</h2>
+      The server that is running the upstream metaverse server code. This is the server that manages user connections,
+      responds to requests from clients, and informs clients about state changes.
+    </div>
+  </div>
+  </a>
+  <p>
+    The first thing that starts running is always the UI. The UI is the entry point to the viewer, and triggers the Core
+    to begin accepting messages. In the debug UI, that is found in the
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L98">main()</a>
+    function in the main.rs file, which triggers the
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L334">start_client()</a>
+    and
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L322">start_listener()</a>
+    functions on startup.
+    <br>
+    <hr>
+    There are now three independent async processes running after startup.
+  <div class="bubble-row">
+
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/initialize.rs#L65">
+      <div class="contrast_bubble_small">
+        <h3>Mailbox</h3>
+      </div>
+    </a>
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L329">
+      <div class="contrast_bubble_small">
+        <h3>Core Listener</h3>
+      </div>
+    </a>
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/initialize.rs#L92">
+      <div class="contrast_bubble_small">
+        <h3>UI Listener</h3>
+      </div>
+    </a>
+
+  </div>
+  The call order looks like this.
+  <ol type="1">
+    <li>
+      <a
+        href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L334">Start_client()</a>,
+      which spawns an async task where the core will run until the UI is shut down
+    </li>
+    <li>
+      <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/initialize.rs#L56"
+        class="contrast_link">initialize()</a>, which instantiates the core's actix mailbox, and spawns an async task
+      for
+      listening to UI messages that runs until the core is shut down.
+    </li>
+    <li>
+      <a
+        href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/initialize.rs#L92">listen_for_ui_messages()</a>
+      which listens on the port specified at the UI's startup, and notifies the now-running mailbox for events from the
+      UI.
+    </li>
+    <li>
+      <a
+        href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L329">Listen_for_core_events()</a>
+      which listens on the port specified at the UI's startup, and notifies the UI for events from the core.
+
+    </li>
+  </ol>
+</div>
+<div class="bubble">
+  <h1>UDP Sockets</h1>
+  <p>The UI and Core communicate through local UDP sockets, which send byte data back and forth between the two
+    components.
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L64">Listen_for_ui_messages()</a>
+    handles the Core-to-UI communication pipeline. Packets are parsed into a <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/packet/packet.rs#L12">Packet</a>
+    object, and sent to the Mailbox for
+    processing. <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/ui_subscriber.rs#L62">Listen_for_core_events()</a>
+    handles the UI-to-Core communication pipeline.
+    <br>
+    <br>
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/ui_subscriber.rs#L62">Listen_for_core_events()</a>
+    is not implemented by the core, and is intended to be implemented by UI programs.
+  <div class="wavy_bubble">
+    <div class="bubble-row">
+      <div class="contrast_bubble">
+        <h3><a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L64">
+            Listen_for_ui_messages()</a>
+        </h3>
+        The Core listens on a socket for UI messages
+      </div>
+      <div class="contrast_bubble">
+        <h3><a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L211">
+            Core Message Sender</a>
+        </h3>
+        The core sends UIMessage packets to the UI
+      </div>
+      <div class="contrast_bubble">
+        <h3>
+          <a
+            href='https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L322'>
+            UI Message Handler</a>
+        </h3>
+        The UI listens on a socket for Core messages
+      </div>
+      <div class="contrast_bubble">
+        <h3>
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L355">
+            Example UI Message Send
+          </a>
+        </h3>
+        An example of how messages are sent from the UI to the core
+      </div>
+    </div>
+  </div>
+  <a href="https://github.com/benthic-mmo/metaverse_client/blob/main/crates/core/src/ui_subscriber.rs#L62">
+    Listen_for_core_events()
+  </a> handles message queues for the UI using Rust's Crossbeam crate. When it receives a message, it adds it to the
+  queue, and the UI is responsible for going through and emptying that queue with its <a
+    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L254">handle
+    queue()</a> function. If you were to create your own client in a
+  different language, this would have to be rewritten, and crossbeam replaced with another async channel to store the
+  queue.
+</div>

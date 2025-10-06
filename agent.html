@@ -1,0 +1,278 @@
+---
+layout: default
+title: Agent
+---
+
+<div class="bubble">
+  <h1>Agent</h1>
+  Agents are the representation of the user, and other players in the 3d world.
+  The agent sruct stores player locations, outfit data, and skeleton data.
+  <br />
+  <br />
+  <div class="contrast_bubble_small">
+    <p>
+      Implementing agents requires using the
+      <a href="">FetchInventoryDescendents2</a>,
+      <a href="">FetchLibDescendents2</a>, and
+      <a href="">ViewerAsset</a>
+      endpoints, along with the
+      <a href="/inventory">inventory crate</a> enabled. If you are unfamiliar
+      with how capabilities work, visit
+      <a href="/capabilities">the capabilities</a> page on these docs.
+    </p>
+  </div>
+  <br />
+  Agent data begins the same way all object data does. Through the
+  <a href="/objects">ObjectUpdate</a> packet.
+
+  <div class="sinister_bubble">
+    <div class="bubble-column" style="max-width: 1000px">
+      <div class="contrast_bubble_small">
+        <h3>1.</h3>
+        <p>
+          The type of the ObjectUpdate is determined to be
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L41"
+            >Agent </a
+          >. Agent data is handled through the Inventory system, and must be
+          retreived through a capability endpoint.
+        </p>
+      </div>
+      <div class="contrast_bubble_small">
+        <h3>2.</h3>
+        <p>
+          If the session's
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L45"
+          >
+            agent ID is equal to the message's ID </a
+          >, then the objectUpdate is requesting to render the current user's
+          model.
+        </p>
+      </div>
+      <div class="contrast_bubble_small">
+        <h3>3.</h3>
+        <p>
+          Check if the user's inventory has loaded its
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L46"
+            >CurrentOutfit</a
+          >
+          yet. This is done using the <a href="/inventory">inventory</a>, which
+          should have begun downloading folders and metadata immediately after
+          login. If it is not loaded yet, requeue the request and try again
+          later.
+        </p>
+      </div>
+      <div class="contrast_bubble_small">
+        <h3>4.</h3>
+        <p>
+          Add the requested user ID to the
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L56"
+            >agent_list</a
+          >, the session-global list of all agents. This will contain its ID,
+          position, and the number of items in the current outfit.
+        </p>
+      </div>
+      <div class="contrast_bubble_small">
+        <h3>5.</h3>
+        <p>
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L72"
+            >Download</a
+          >
+          all of the assets from the inventory's CurrentOutfit folder. This
+          currently contains just the item metadata. The metadata will be used
+          to make a request to the ViewerAsset capability, which contains the
+          full mesh and skin data from the server.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bubble">
+  <h1>Download Agent Assets</h1>
+  Downloading agent assets is triggered asyncronously from
+  <a
+    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L72"
+    >here</a
+  >. Each object in the outfit creates a new actor which goes to actix for
+  scheduling, which prevents large model downloads from blocking the main
+  thread.
+  <div class="bubble-column" , style="max-width: 700px">
+    <div class="contrast_bubble_small">
+      <h3>1.</h3>
+      <p>
+        If the agent asset is an Object,
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L61"
+          >Download it</a
+        >
+        from the ViewerAsset capability endpoint. This will return an LLSD-XML
+        encoded SceneGroup, which will be
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L47"
+          >parsed</a
+        >
+        into a usable SceneGroup object.
+      </p>
+    </div>
+    <div class="contrast_bubble_small">
+      <h3>2.</h3>
+      <p>
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L179"
+          >Download the scenegroup mesh</a
+        >. Each SceneGroup can contain one or several parts, which each contain
+        their own mesh, which needs to be downloaded individually.
+      </p>
+    </div>
+    <div class="contrast_bubble_small">
+      <h3>3.</h3>
+      <p>
+        Download each scene's
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L60"
+        >
+          mesh
+        </a>
+        individually, and convert to a rust struct.
+      </p>
+    </div>
+    <div class="contrast_bubble_small">
+      <h3>4.</h3>
+      <p>
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L188"
+          >Apply</a
+        >
+        the skin bind shape matrix to the vertices that were received from the
+        server. If this is not done, the vertices will look strange and
+        distorted. Take these modified vertices and store them in the scene.
+      </p>
+    </div>
+  </div>
+  {% capture LLSD%}
+  <h2>LLSD Formats</h2>
+  The ViewerAsset endpoint does not respond with uniform encodings. Some
+  requests will result in XML, some will result in a custom JSON-adjacent
+  format, and some will result in a custom whitespace seperated format. These
+  can be very confusing and difficult to debug.
+  <div class="bubble-row" style="max-width: 700px">
+    <div class="sinister_bubble">
+      <h3>Item</h3>
+      <a href="https://wiki.secondlife.com/wiki/LLSD#Notation_Serialization">
+        Notation Serialization</a
+      >
+      <br />
+      Items are encoded using a completely unique newline seperated notation.
+      Parsing must be done character by character.
+      <pre><code>
+LLWearable version 22
+New Pants
+
+	permissions 0
+	{
+		base_mask	00000000
+		owner_mask	00000000
+		group_mask	00000000
+		everyone_mask	00000000
+		next_owner_mask	00000000
+		creator_id	11111111-1111-0000-0000-000100bba000
+		owner_id	11111111-1111-0000-0000-000100bba000
+		last_owner_id	00000000-0000-0000-0000-000000000000
+		group_id	00000000-0000-0000-0000-000000000000
+	}
+	sale_info	0
+	{
+		sale_type	not
+		sale_price	10
+	}
+type 5
+parameters 9
+625 0
+638 0
+806 .8
+807 .2
+808 .2
+814 1
+815 .8
+816 0
+869 0
+textures 1
+2 5748decc-f629-461c-9a36-a35a221fe21f
+      </code></pre>
+    </div>
+    <div class="sinister_bubble">
+      <h3>Mesh</h3>
+      <a href="https://wiki.secondlife.com/wiki/Mesh/Mesh_Asset_Format">
+        Mesh Asset Format
+      </a>
+      <br />
+
+      The data structure starts out with a header in
+      <a href="https://wiki.secondlife.com/wiki/LLSD#binary_data"
+        >LL binary format</a
+      >.
+      <br />
+      The header is uncompressed and contains the offset positions for each of
+      the compressed values.
+      <br />
+      Extracted from the binary format to a HashMap, it looks something like
+      this.
+      <br />
+      <pre><code>
+Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
+      physics_convex: Map({ size: Integer(204), offset: Integer(598) }),
+      lowest_lod: Map({ size: Integer(1305), offset: Integer(802) }), 
+      low_lod:Map({ size: Integer(2246), offset: Integer(2107) }), 
+      medium_lod: Map({offset: Integer(4353), size: Integer(7672) }), 
+      high_lod: Map({ size:Integer(27225), offset: Integer(12025) }), });
+      </code></pre>
+      The offset it points to is the exact position in the data of the next zlib
+      magic number for decompressing each section. Once decompressed, the data
+      is encoded in the same binary llsd format that the header is.
+    </div>
+    <div class="sinister_bubble">
+      <h3>SceneGroup</h3>
+      <a href="https://wiki.secondlife.com/wiki/LLSD#XML_Serialization">
+        XML Serialization
+      </a>
+      The SceneGroup returns much more standard XML.
+      <pre><code>
+&lt;SceneObjectGroup&gt;
+  &lt;RootPart&gt;
+    &lt;SceneObjectPart xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; 
+        xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+      &lt;AllowedDrop&gt;false&lt;/AllowedDrop&gt;
+      &lt;CreatorID&gt;
+        &lt;UUID&gt;fb2e5541-66ba-4019-a5de-e8b9286b0914&lt;/UUID&gt;
+      &lt;/CreatorID&gt;
+      &lt;FolderID&gt;
+        &lt;UUID&gt;ea04498f-daca-4a86-9ebb-9ce704f78e62&lt;/UUID&gt;
+      &lt;/FolderID&gt;
+      &lt;InventorySerial&gt;0&lt;/InventorySerial&gt;
+      &lt;UUID&gt;
+        &lt;UUID&gt;ea04498f-daca-4a86-9ebb-9ce704f78e62&lt;/UUID&gt;
+      &lt;/UUID&gt;
+      &lt;LocalId&gt;403012829&lt;/LocalId&gt;
+      &lt;Name&gt;body&lt;/Name&gt;
+      &lt;Material&gt;3&lt;/Material&gt;
+      &lt;PassTouches&gt;false&lt;/PassTouches&gt;
+      &lt;PassCollisions&gt;false&lt;/PassCollisions&gt;
+      &lt;RegionHandle&gt;1099511628032000&lt;/RegionHandle&gt;
+      &lt;ScriptAccessPin&gt;0&lt;/ScriptAccessPin&gt;
+      &lt;GroupPosition&gt;
+        &lt;X&gt;-3.7252903E-09&lt;/X&gt;
+        &lt;Y&gt;0.21699509&lt;/Y&gt;
+        &lt;Z&gt;4.656613E-10&lt;/Z&gt;
+      &lt;/GroupPosition&gt;
+      &lt;OffsetPosition&gt; 
+...
+      </code></pre>
+    </div>
+  </div>
+  {% endcapture %} {% include evil_benthic.html content=LLSD%}
+</div>
+<div class="bubble"></div>
