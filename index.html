@@ -94,6 +94,18 @@ title: Main
   <br>
   <br>
   The majority of the business logic lives in metaverse_client, and will be "home base" when developing.
+  Each crate within metaverse_client has its own depenencies, and can be built and tested independently from each other.
+  When building and testing locally, make sure that your local dependencies are specified in the Cargo.yaml, and not the
+  release version.
+  <pre><code>
+      [dependencies]
+      metaverse_messages = {path = "../messages/"}
+      metaverse_environment = {path = "../environment/"}
+      metaverse_agent = {path = "../agent/"}
+      metaverse_inventory = {path = "../inventory/"}
+      metaverse_gltf = {path = "../../../metaverse_gltf/"}
+      // more dependencies ...
+    </code></pre>
   Metaverse_client contains a debug UI, and can be run as a standalone project using
   <pre><code>cargo run</code></pre>
   <br>
