@@ -1,0 +1,85 @@
+---
+layout: default
+title: Login
+---
+
+<div class="bubble">
+  <h1>Login & Session</h1>
+  <p>
+    Before a client can do anything, it needs to establish a session with the server. Currently mainstream OpenSimulator
+    servers use xml-rpc to establish the initial connections, which begins a several part handshake in order to
+    establish the user connection, though Secondlife servers have moved on to a more modern method.
+    <br>
+    <br>
+    Throughout the protocol, the method used for logging in is entirely unique.
+  </p>
+  <div class="bubble-row">
+    <div class="contrast_bubble_small">
+      <h3>Step 1:</h3>
+      Trigger a login from the UI
+    </div>
+  </div>
+</div>
+<div class="bubble">
+  <h1>Trigger Login</h1>
+  <p>
+    To begin the process of logging in, you need to first provide your user with a means of inputting their login
+    credentials. The metaverse protocol requires more than the usual amount of information when establishing sessions.
+  </p>
+  <div class="bubble-row">
+    <a
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.first">
+      <div class="tertiary_bubble_small">
+        First Name
+      </div>
+    </a>
+    <a
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.last">
+      <div class="tertiary_bubble_small">
+        Last Name
+      </div>
+    </a>
+    <a
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.passwd">
+      <div class="tertiary_bubble_small">
+        Password
+      </div>
+    </a>
+    <a
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.start">
+      <div class="tertiary_bubble_small">
+        Start
+      </div>
+    </a>
+    <a
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.channel">
+      <div class="tertiary_bubble_small">
+        Channel
+      </div>
+    </a>
+    <a
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.agree_to_tos">
+      <div class="tertiary_bubble_small">
+        Agree To TOS
+      </div>
+    </a>
+    <a
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.read_critical">
+      <div class="tertiary_bubble_small">
+        Read Critical
+      </div>
+    </a>
+    <a
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.url">
+      <div class="tertiary_bubble_small">
+        URL
+      </div>
+    </a>
+  </div>
+  <p>
+    Each label will bring you to the docs.rs page describing the field.
+  </p>
+  <p>
+    This is the minimum amount of information that needs to be collected.
+  </p>
+</div>

@@ -163,14 +163,30 @@
 
     .contrast_bubble_small {
       background-color: #d1a847;
-      /* semi-transparent yellow */
       backdrop-filter: blur(8px);
       border-radius: 25px;
       padding: 10px 20px;
       color: #0c1552;
       display: flex;
       align-items: center;
+      justify-content: center;
+      min-width: 75px;
       gap: 10px;
+      text-align: center;
+    }
+
+    .tertiary_bubble_small {
+      background-color: #515bac;
+      backdrop-filter: blur(8px);
+      border-radius: 25px;
+      padding: 10px 20px;
+      color: #d1a847;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 75px;
+      gap: 10px;
+      text-align: center;
     }
 
 
@@ -318,7 +334,10 @@
     <ul class="menu">
       <li><a href="/">Home</a></li>
       <li><a href="/about">About</a></li>
-      <li><a href="/protocol">Protocol</a></li>
+      <hr>
+      <li><a href="/login">Login & Session</a></li>
+      <li><a href="/chat">Chat</a></li>
+
       <li><a href="/rendering">Rendering</a></li>
     </ul>
   </nav>
