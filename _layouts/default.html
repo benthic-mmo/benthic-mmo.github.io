@@ -8,7 +8,7 @@
 <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-rust.min.js"></script>
-    <style>
+<style>
     body {
       margin: 0;
       font-family: sans-serif;
@@ -110,6 +110,17 @@
       padding: 20px;
       color: white;
       margin: 20px;
+      overflow: hidden;
+    }
+    .bubble .image img {
+      width: 100%;
+      height: auto;
+      display: block; /* remove any default inline gaps */
+      border-radius: inherit; /* ensures consistent curvature */
+    }
+
+    .image{
+      background-color: #1d2242;
     }
 
     .sinister{
@@ -148,6 +159,7 @@
       color: #515bac;
     }
 
+
     .wavy {
       padding-top: 60px;
       color: white;
@@ -181,7 +193,10 @@
 
     .tertiary h1, 
     .tertiary h2, 
-    .tertiary h3 {
+    .tertiary h3,
+    .good h1,
+    .good h2,
+    .good h3{
       color: #d1a847
     }
 
@@ -208,7 +223,7 @@
     .contrast a,
     .contrast a:visited
     {
-      color: inherit;
+      color: #0c1552;
     }
 
     .evil a,
@@ -234,19 +249,32 @@
       margin: 0px;
     }
 
+    .img-column{
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+    }
+
     .bubble-column {
       display: flex;
       flex-direction: column;
       align-items: center;
       margin: 20px;
     }
+    .bubble-column .bubble,
+    .img-column .bubble{
+      margin: 10px
+    }
 
     .bubble-column .bubble,
     .bubble-column h1,
     .bubble-column h2,
-    .bubble-column h3{
+    .bubble-column h3,
+    .bubble-column a,
+    .bubble-column a:visited{
       color: #ffcc55
     }
+
     .bubble-column .bubble:nth-child(1) {
       background-color: #515bac;
 
@@ -270,7 +298,7 @@
       background-color: #1e255c
     }
 
-    .wavy img {
+    .bounce {
       -webkit-animation: mover 2s infinite alternate;
       animation: mover 2s infinite alternate;
     }
@@ -281,7 +309,7 @@
 
     @-webkit-keyframes mover {
       0% {
-        transform: translateY(0);
+        transform: translateY(0) rotate(0deg);
       }
 
       100% {
@@ -326,10 +354,6 @@
       transition: margin-left 0.3s ease;
       margin-left: 0;
     }
-
-
-
-
 
     @media (max-width: 700px) {
       .bubble-row {
@@ -433,7 +457,6 @@
     </a>
     <ul class="menu">
       <li><a href="/">Home</a></li>
-      <li><a href="/about">About</a></li>
       <li><hr></li>
       <li><a href="/core">Core & UI</a></li>
       <li><a href="/login">Login & Session</a></li>

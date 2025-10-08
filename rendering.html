@@ -1,9 +1,164 @@
 ---
 layout: default
-title: Rendering
+title: Renderin
 ---
 
-<div class = "bubble">
+{% include happy_benthic.html %}
+<div class="bubble">
   <h1>Rendering</h1>
-  <p>This will contain documentation about how game objects go from data to rendered files on user machines. This will discuss in detail how files get loaded, and displayed. </p>
+  Model generation is handled by the
+  <a href="https://github.com/benthic-mmo/metaverse_gltf">metaverse_gltf</a>
+  crate.
+  <br />
+  Its main entrypoint is through the
+  <a
+    href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L9"
+    >generate_skinned_mesh()</a
+  >
+  and
+  <a
+    href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L22"
+    >generate_mesh()</a
+  >
+  functions. Both of these functions also have C and C# wrappers, called
+  <a
+    href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L35"
+    >generate_skinned_mesh_legacy</a
+  >
+  and
+  <a
+    href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L68"
+    >generate_mesh_legacy</a
+  >.
+  <br />
+  <div class="bubble-row">
+    <div class="bubble tertiary">
+      <h2>
+        <a
+          href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L22"
+          >Generate Mesh</a
+        >
+      </h2>
+      <div class="bubble">
+        <h2>
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/scene.rs#L32"
+            >SceneGroup</a
+          >
+        </h2>
+        The function accepts a list of paths to JSON serialized SceneGroup
+        objects
+        <br />
+        <a
+          href="https://github.com/benthic-mmo/metaverse_gltf/tree/main/tests/example_json/body.json"
+          >Example</a
+        >
+        <pre><code>{
+  "parts": [
+    {
+      "creator_id": "fb2e5541-66ba-4019-a5de-e8b9286b0914",
+      "folder_id": "00000000-0000-0000-0000-000000000000",
+      "inventory_serial": 0,
+      "name": "body",
+      "pass_touches": false,
+      "pass_collisions": false,
+      "region_x": 256000,
+...
+        </code></pre>
+      </div>
+    </div>
+    <div class="bubble tertiary" style="max-width: 900px">
+      <h2>
+        <a
+          href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L9"
+          >Generate Skinned Mesh</a
+        >
+      </h2>
+      <div class="bubble-row">
+        <div class="bubble">
+          <h2>
+            <a
+              href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/scene.rs#L32"
+              >SceneGroup</a
+            >
+          </h2>
+          The function accepts a list of paths to JSON serialized SceneGroup
+          objects
+          <br />
+          <a
+            href="https://github.com/benthic-mmo/metaverse_gltf/tree/main/tests/example_json/body.json"
+            >Example</a
+          >
+          <pre><code>{
+  "parts": [
+    {
+      "creator_id": "fb2e5541-66ba-4019-a5de-e8b9286b0914",
+      "folder_id": "00000000-0000-0000-0000-000000000000",
+      "inventory_serial": 0,
+      "name": "body",
+      "pass_touches": false,
+      "pass_collisions": false,
+      "region_x": 256000,
+...
+        </code></pre>
+        </div>
+        <div class="bubble">
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L9"
+          >
+            <h2>Skeleton</h2>
+          </a>
+
+          It also accepts a path to a JSON serialized Skeleton objects
+          <br />
+          <a
+            href="https://github.com/benthic-mmo/metaverse_gltf/tree/main/tests/example_json/skeleton.json"
+            >Example</a
+          >
+          <pre><code>{
+  "joints": {
+    "Butt": {
+      "name": "Butt",
+      "transforms": [
+        {
+          "name": "Default",
+          "id": "00000000-0000-0000-0000-000000000000",
+          "transform": [
+            3.802805e-8,
+...
+        </code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  Example rust usage of this crate can be found in the
+  <a href="https://github.com/benthic-mmo/metaverse_gltf/tree/main/tests"
+    >tests</a
+  >
+  directory.
+  <br />
+  The goal of this is to create a standardized way of generating GLTF files from
+  open metaverse server data that can be used by any project in any language.
+</div>
+<div class="bubble">
+  <h1>C and C#</h1>
+  To build for use with C# run
+  <pre><code>cargo build --release</code></pre>
+  The rust shared library will be created in the
+  <code>target/release/</code> directory. The resulting shared library will be
+  different on each platform.
+  <div class="bubble-row">
+    <div class="bubble contrast">
+      <h2>Linux</h2>
+      libmetaverse_gltf.so
+    </div>
+    <div class="bubble contrast">
+      <h2>Mac</h2>
+      libmetaverse_gltf.dylib
+    </div>
+    <div class="bubble contrast">
+      <h2>Windows</h2>
+      libmetaverse_gltf.dll
+    </div>
+  </div>
 </div>

@@ -2,7 +2,7 @@
 layout: default
 title: Agent
 ---
-
+{% include happy_benthic.html %}
 <div class="bubble">
   <h1>Agent</h1>
   Agents are the representation of the user, and other players in the 3d world.
@@ -93,7 +93,7 @@ title: Agent
   </div>
 </div>
 <div class="bubble">
-  <h1>Download Agent Assets</h1>
+  <h1>Fetch assets from ViewerAsset endpoint</h1>
   Downloading agent assets is triggered asyncronously from
   <a
     href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L72"
@@ -101,61 +101,36 @@ title: Agent
   >. Each object in the outfit creates a new actor which goes to actix for
   scheduling, which prevents large model downloads from blocking the main
   thread.
-  <div class="center">
-    <div class="bubble-column" , style="max-width: 700px">
-      <div class="bubble contrast small">
-        <h2>1.</h2>
-        <p>
-          If the agent asset is an Object,
-          <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L61"
-            >Download it</a
-          >
-          from the ViewerAsset capability endpoint. This will return an LLSD-XML
-          encoded SceneGroup, which will be
-          <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L47"
-            >parsed</a
-          >
-          into a usable SceneGroup object.
-        </p>
-      </div>
-      <div class="bubble contrast small">
-        <h2>2.</h2>
-        <p>
-          <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L179"
-            >Download the scenegroup mesh</a
-          >. Each SceneGroup can contain one or several parts, which each
-          contain their own mesh, which needs to be downloaded individually.
-        </p>
-      </div>
-      <div class="bubble contrast small">
-        <h2>3.</h2>
-        <p>
-          Download each scene's
-          <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L60"
-          >
-            mesh
-          </a>
-          individually, and convert to a rust struct.
-        </p>
-      </div>
-      <div class="bubble contrast small">
-        <h2>4.</h2>
-        <p>
-          <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L188"
-            >Apply</a
-          >
-          the skin bind shape matrix to the vertices that were received from the
-          server. If this is not done, the vertices will look strange and
-          distorted. Take these modified vertices and store them in the scene.
-        </p>
-      </div>
-    </div>
-  </div>
+  <br>
+  <br>
+  The ViewerAsset endpoint expects requests in the format of
+  <pre>
+    <code>http://[UUID OF VIEWERASSET ENDPOINT]?[OBJECT TYPE]_id=[ASSET ID]</code></pre>
+  <p>
+    In practice, this looks like 
+  <pre>
+    <code>http://da4b15ea-1d97-4140-afe3-2dd1ce5560710000?bodypart_id=da4b15ea-1d97-4140-afe3-2dd1ce5560710000</code></pre>
+    If the agent asset is an Object,
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L61"
+      >Download it</a
+    >
+    from the ViewerAsset capability endpoint. This will return an LLSD-XML
+    encoded SceneGroup, which will be
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L47"
+      >parsed</a
+    >
+    into a usable SceneGroup object for further operations.
+    <br />
+    <br />
+    If the object is an Item,
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L102"
+      >download it
+    </a>
+    and add it directly to the agent list.
+  </p>
   {% capture LLSD%}
   <h2>LLSD Formats</h2>
   The ViewerAsset endpoint does not respond with uniform encodings. Some
@@ -221,6 +196,10 @@ textures 1
           >Mesh</a
         >
       </h3>
+      <a href="https://wiki.secondlife.com/wiki/LLSD#binary_data"
+        >LL binary format</a
+      >.
+      <br />
       <a href="https://wiki.secondlife.com/wiki/Mesh/Mesh_Asset_Format">
         Mesh Asset Format
       </a>
@@ -296,13 +275,239 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
   {% endcapture %} {% include evil_benthic.html content=LLSD%}
 </div>
 <div class="bubble sinister">
+  <h1>Download Mesh</h1>
+  <p>
+    Each SceneGroup can contain one or several parts, which each contain their
+    own mesh. Each mesh needs to be
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L184"
+      >downloaded individually</a
+    >.
+  </p>
+  <div class="bubble evil">
+    <h2>Apply Bind Shape Matrix</h2>
+    Download each scene's
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L60"
+    >
+      mesh
+    </a>
+    and
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L188"
+      >Apply</a
+    >
+    the skin
+    <a
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/mesh.rs#L500"
+      >bind shape matrix</a
+    >
+    to the vertices retreived from the server. If the bind shape matrix is not
+    applied, the model will look distorted.
+    <div class="bubble-row">
+      <div class="img-column">
+        <div class="bubble image">
+          <img
+            src="{{ 'images/mesh/no_bind_shape_matrix.png' | relative_url }}"
+            alt="a model without the bind shape matrix applied"
+          />
+        </div>
+        <div class="bubble tertiary">
+          <h3>Bind Shape Matrix Not Applied</h3>
+        </div>
+      </div>
+      <div class="img-column">
+        <div class="bubble image">
+          <img
+            src="{{ 'images/mesh/with_bind_shape_matrix.png' | relative_url }}"
+            alt="a model with the bind shape matrix applied"
+          />
+        </div>
+        <div class="bubble tertiary"><h3>Bind Shape Matrix Applied</h3></div>
+      </div>
+    </div>
+  </div>
+  {% capture SculptTexture %}
+  <h1>Sculpt Texture</h1>
+  There are several UUIDs throughout the SceneGroup, but only one of them can be
+  used to request the mesh from the ViewerAsset endpoint. Unintuitively, this is
+  found in the scene's
+  <a
+    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/scene.rs#L639"
+  >
+    sculpt texture</a
+  >. The sculpt data in the SceneGroup is an artifact from the days of
+  <a
+    href="https://wiki.secondlife.com/wiki/Sculpted_Prims:_Sculpt_Maps_and_Textures"
+    >SculptTextures</a
+  >, and has gradually evolved to include modern mesh information. {% endcapture
+  %} {% include evil_benthic.html content=SculptTexture %}
+</div>
+
+
+<div class="bubble extra_sinister">
   <h1>Skeleton</h1>
   Skeleton handling in open metaverse projects can be tricky. The assumption
   from the server is that each client will have its own downloaded base
-  skeleton, which all skinned meshes will apply transforms to.
-  <br />
-  When we retreive an object with a Skin attribute, we need to create a
-  representation of its skeleton in code, so we can apply the transforms and
-  bake it into a single, global agent skeleton which transforms every mesh in
-  the scenegroup.
+  skeleton, which all skinned meshes will use as a reference when managing their bone structure.
+  <br>
+<a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L72">create_skeleton()</a> begins the process of handling the skeleton for the individual SceneObject. 
+
+  <br>
+  <br>
+
+  The default global skeleton is stored in <a href="https://github.com/benthic-mmo/metaverse_client/blob/main/crates/agent/src/benthic_default_model/skeleton.gltf">skeleton.gltf</a>. This can be opened in blender by importing the file as GLTF to view the bones. 
+  <div class="center">
+  <div class="bubble image" style="max-width: 400px">
+          <img
+            src="{{ 'images/mesh/default_skeleton.png' | relative_url }}"
+            alt="The default skeleton"
+          />
+  </div>
+    </div>
+  <br>
+  <br>
+  This skeleton is made useable by the <a href="https://github.com/benthic-mmo/metaverse_client/blob/main/crates/agent/build.rs">build.rs</a> build script that is run at compile time. This generates a <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L9">Skeleton</a> object, which can be placed <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/agent/src/skeleton.rs#L34">in code</a> as a fully defined skeleton with the default transforms.
+
+  <br>
+  {% capture Skele %}
+  <h1>IBMs</h1>
+  The reason the default skeleton is necessary is because the server does not store the joint rotations. The <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/mesh.rs#L496">IBM</a> field in the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/mesh.rs#L23">Mesh</a> object's Skin is retrieved from the server as almost exclusively the identity matrix. 
+
+    <div class="bubble-row">
+      <div class="img-column">
+        <div class="bubble image">
+          <img
+            src="{{ 'images/mesh/non_adjusted_IBMs.png' | relative_url }}"
+            alt="A model with all of the skeleton joints pointing directly up"
+          />
+        </div>
+        <div class="bubble tertiary">
+          <h3>Only Server IBMs Applied</h3>
+  <pre><code class="language-rust">Example:
+Mat4 { x_axis: Vec4(1.0, 0.0, 0.0, 0.0),
+       y_axis: Vec4(0.0, 0.9999889, 0.0, 0.0),
+       z_axis: Vec4(0.0, 0.0, 0.9999904, 0.0),
+       w_axis: Vec4(0.001931607, -0.04089581, 0.00318855, 1.0) }</code></pre>
+    The server's IBMs contain only the translation. The joints are in the right place, but they don't have the correct rotation. 
+        </div>
+      </div>
+
+      <div class="img-column">
+        <div class="bubble image">
+          <img
+            src="{{ 'images/mesh/default_only_IBMs.png' | relative_url }}"
+            alt="A model with the skeleton far away from the model"
+          />
+        </div>
+        <div class="bubble tertiary">
+          <h3>Only Default IBMs Applied</h3>
+  <pre><code class="language-rust">Example:
+  Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
+         y_axis: Vec4(-0.8080318, -1.2663957e-5, -0.58910865, 0.0),
+         z_axis: Vec4(-0.5891205, 4.293412e-6, 0.8080454, -0.0),
+         w_axis: Vec4(-1.5247067, -0.11596913, 2.2314665, 1.0) }</code></pre>
+        The default skeleton's IBMs contain both rotation and translation, but are offset from the model, and don't reflect its actual scale.
+        </div>
+      </div>
+      <div class="img-column">
+        <div class="bubble image good">
+          <img
+            src="{{ 'images/mesh/correct_IBMs.png' | relative_url }}"
+            alt="A model with the skeleton far away from the model"
+          />
+        </div>
+        <div class="bubble good">
+          <h3>Default Rotations * Server Transform</h3>
+  <pre><code class="language-rust">Example:
+  Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
+         y_axis: Vec4(-0.8080318, -1.2663957e-5, -0.58910865, 0.0),
+         z_axis: Vec4(-0.5891205, 4.293412e-6, 0.8080454, -0.0),
+         w_axis: Vec4(0.0, 0.0, 0.0, 1.0) }</code></pre>
+        The default rotation needs to have its w axis zeroed out in order for it to not alter the server's translation IBM when multiplying. This contains the correct rotation information. 
+        <div class="small" style="color: #ffcc55; font-size: 4rem">x</div>
+  <pre><code class="language-rust">Example:
+Mat4 { x_axis: Vec4(1.0, 0.0, 0.0, 0.0),
+       y_axis: Vec4(0.0, 0.9999889, 0.0, 0.0),
+       z_axis: Vec4(0.0, 0.0, 0.9999904, 0.0),
+       w_axis: Vec4(0.001931607, -0.04089581, 0.00318855, 1.0) }</code></pre>
+        Since this is already mostly the identity matrix, this can combine with the default using matrix multiplication.
+        </div>
+      </div>
+    </div>
+
+  The values must be multiplied, as well. A simple swap of the default's xyz and the server's w value will result in a very confused and incorrect skeleton. 
+    <div class="bubble-row">
+      <div class="bubble image">
+          <img
+            src="{{ 'images/mesh/no_multiplication.png' | relative_url }}"
+            alt="A model with the joints scattered everywhere"
+          />
+    </div>
+    <div class="bubble tertiary">
+          <h3>Default Rotations * Server Transform</h3>
+
+      <pre><code class="language-rust">Example:
+  Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
+         y_axis: Vec4(-0.8080318, -1.2663957e-5, -0.58910865, 0.0),
+         z_axis: Vec4(-0.5891205, 4.293412e-6, 0.8080454, -0.0),
+        
+         Replace the W axis:
+         w_axis: Vec4(-1.5247067, -0.11596913, 2.2314665, 1.0) }</code></pre>
+      <div class="small" style="color: #ffcc55; font-size: 4rem">v</div>
+  <pre><code class="language-rust">Example:
+Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
+       y_axis: Vec4(-0.8080318, -1.2663957e-5, -0.58910865, 0.0),
+       z_axis: Vec4(-0.5891205, 4.293412e-6, 0.8080454, -0.0),
+       w_axis: Vec4(0.001931607, -0.04089581, 0.00318855, 1.0) }</code></pre>
+      This will not work. 
+        </div>
+  </div>
+  {% endcapture %}
+  {% include evil_benthic.html content=Skele %}
+
+  The skeleton hierarchy is stored in the default skeleton. By this point. all joints know their parent and their children. 
+  <br>
+  in order to determine the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/agent/src/skeleton.rs#L108">local transforms</a>, a simple calculation is done on each joint. 
+  <div class="bubble small">
+    <h2>Parent</h2> * <h2>Child Inverse</h2>
+  </div>
+  </div>
+<div class="bubble sinister">
+  <h1>
+    Save JSON
+  </h1>
+  Now that we have the full SceneObject, and have stored and handled its skeleton, we are almost ready for rendering. The rendering component expects SceneGroup objects serialized into JSON. The handled object gets <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L78">written to disk</a>, where it will later be read in order to create a full 3d model.
+</div>
+<div class="bubble sinister">
+  <h1>Agent List</h1>
+  The agent list is the list of all agents visible to the user, including itself. Once an object is ready to be rendered, it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L209">adds it</a> to the list of outfit items in the agent list. 
+  <br>
+{% capture GlobalSkeleton %}
+  <h1>Global Skeleton</h1>
+  Creating a global skeleton seems easy in theory, but this gets complicated when outfit objects can stream in in any order, and the skeleton can be deformed by any object.
+  <br>
+  For example, a model might have a "body" object that has custom joint positions for every joint. The player might then have a "shirt" object equipped that has different joint positions for joints that the body has already morphed. Depending on which one loads first, the shirt or the body's transforms might be applied to the global skeleton, and the model will render looking deformed. 
+  <br>
+  <br>
+  To handle this, each <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L19">joint</a> in the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L9">skeleton</a> object stores its transforms as a vector. Each transform then has a <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L52">rank</a> which is <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/agent/src/skeleton.rs#L139">increased</a> when multiple objects load in with the same joint transform values. The Transform vector is organized in order of highest to lowest transform rank, with the highest always being the one that renders.
+  <br>
+  <br>
+  Each time an object is added to an agent through the agent list, the model's transforms are added to the global agent skeleton. 
+  {% endcapture %} {% include evil_benthic.html content=GlobalSkeleton %}
+
+  If we have received all of the outfit items required for the model, then  it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L125">requests a model render</a>. 
+</div>
+
+<div class="bubble sinister">
+  <h1>Generate Model</h1>
+  Now that all of  the outfit objects have been received, the core is ready to start rendering the avatar. The skeleton's final state is <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L138">written to disk</a>, and the JSON paths for all of the SceneObjects are collected and sent to the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L159">generate skinned mesh</a> function. That is an <a href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L9">external function</a>found in the <a href="https://github.com/benthic-mmo/metaverse_gltf">metaverse_gltf</a> crate which generates GLTF from SceneGroup JSON paths.
+  <br>
+<br>
+More info on model generation can be found <a href="/rendering">here</a> in the docs.
+  <br>
+<br>
+  Once the model has been generated, <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L165">send a message to the UI</a> with the position, path and type of the generated model. 
+
+
 </div>
