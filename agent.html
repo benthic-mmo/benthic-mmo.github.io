@@ -34,8 +34,9 @@ title: Agent
           <a
             href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L41"
             >Agent </a
-          >. Agent data is handled through the Inventory system, and must be
-          retreived through a capability endpoint.
+          >. Agent data is handled through the
+          <a href="/inventory">Inventory</a> system, and must be retreived
+          through a <a href="/capabilities">capability endpoint</a>.
         </p>
       </div>
       <div class="bubble contrast small">
@@ -161,6 +162,8 @@ title: Agent
   requests will result in XML, some will result in a custom JSON-adjacent
   format, and some will result in a custom whitespace seperated format. These
   can be very confusing and difficult to debug.
+  <br />
+  <br />
   <div class="bubble-row">
     <div class="bubble sinister">
       <h3>
@@ -175,7 +178,7 @@ title: Agent
       <br />
       Items are encoded using a completely unique newline seperated notation.
       Parsing must be done character by character.
-      <pre><code>
+      <pre><code class="language-none">
 LLWearable version 22
 New Pants
 
@@ -234,7 +237,7 @@ textures 1
       Extracted from the binary format to a HashMap, it looks something like
       this.
       <br />
-      <pre><code>
+      <pre><code class="language-javascript">
 Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
       physics_convex: Map({ size: Integer(204), offset: Integer(598) }),
       lowest_lod: Map({ size: Integer(1305), offset: Integer(802) }), 
@@ -257,7 +260,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
         XML Serialization
       </a>
       The SceneGroup returns much more standard XML.
-      <pre><code>
+      <pre><code class="language-xml">
 &lt;SceneObjectGroup&gt;
   &lt;RootPart&gt;
     &lt;SceneObjectPart xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; 
