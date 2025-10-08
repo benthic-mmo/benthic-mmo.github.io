@@ -15,43 +15,43 @@ title: Login
   </p>
   <div class="bubble-row">
     <a href="#1">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h3>Step 1:</h3>
         Retrieve user login credentials
       </div>
     </a>
     <a href="#2">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h3>Step 2:</h3>
         Convert credentials to xml-rpc
       </div>
     </a>
     <a href="#3">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h3>Step 3:</h3>
         Handle LoginResponse
       </div>
     </a>
     <a href="#4">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h3>Step 4:</h3>
         Initialize session
       </div>
     </a>
     <a href="#5">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h3>Step 5:</h3>
         Send CircuitCode
       </div>
     </a>
     <a href="#6">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h3>Step 6:</h3>
         Send and receive pings
       </div>
     </a>
     <a href="#7">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h3>Step 7:</h3>
         Send CompleteAgentMovement
       </div>
@@ -67,49 +67,49 @@ title: Login
   <div class="bubble-row">
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.first">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         First Name
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.last">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         Last Name
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.passwd">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         Password
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.start">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         Start
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.channel">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         Channel
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.agree_to_tos">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         Agree To TOS
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.read_critical">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         Read Critical
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.url">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         URL
       </div>
     </a>
@@ -151,21 +151,21 @@ let login_data = build_login(Login {
   <div class=bubble-row>
     <a
       href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/login.rs#L107">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h3>UI Login Send</h3>
       </div>
     </a>
-    <div class="tertiary_bubble_small" style="background-color: transparent;">
+    <div class="bubble contrast small">
       {% include arrow.html %}
     </div>
     <a
       href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L79">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h3>Core Login Receive</h3>
       </div>
     </a>
   </div>
-  <div class="evil_extra_bubble">Benthic's
+  <div class="bubble evil">Benthic's
     <a
       href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/ui/login.rs">"login
       packet"</a>
@@ -175,7 +175,7 @@ let login_data = build_login(Login {
   </div>
 
 </div>
-<div class="sinister_bubble">
+<div class="bubble sinister">
   <h1 id="2">XML-RPC Login</h1>
   Now that the login credentials are being sent to the mailbox, it's time for the core to take over and begin the
   handshake process.
@@ -221,7 +221,7 @@ let login_data = build_login(Login {
   {% endcapture %}
   {% include evil_benthic.html content=xmlrpc_content %}
 </div>
-<div class="extra_sinister_bubble">
+<div class="bubble extra_sinister">
   <h1 id="3">Handle LoginResponse</h1>
   <p>
     The
@@ -247,31 +247,31 @@ let login_data = build_login(Login {
   <div class="bubble-row">
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.sim_port">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         sim_port
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.sim_ip">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         sim_ip
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.agent_id">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         agent_id
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.session_id">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         session_id
       </div>
     </a>
     <a
       href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.seed_capability_url">
-      <div class="tertiary_bubble_small">
+      <div class="bubble tertiary small">
         seed_capability_url
       </div>
     </a>
@@ -288,30 +288,30 @@ let login_data = build_login(Login {
     href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/initialize.rs#L66">initialize()</a>.
   There are now three UDP sockets open on the machine.
   <div class="bubble-row">
-    <div class="sinister_bubble">
+    <div class="bubble sinister">
       <a
         href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L329">
         <div class="bubble-row">
-          <div class="tertiary_bubble_small">
+          <div class="bubble tertiary small">
             UI to Client
           </div>
       </a>
       <a
         href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/initialize.rs#L92">
-        <div class="tertiary_bubble_small">
+        <div class="bubble tertiary small">
           Client to UI
         </div>
       </a>
       <a
         href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L293">
-        <div class="tertiary_bubble_small">
+        <div class="bubble tertiary small">
           Client to Server
         </div>
       </a>
     </div>
 
   </div>
-  <div class="contrast_bubble_small">
+  <div class="bubble contrast small">
     Server to Client
   </div>
 </div>
@@ -330,7 +330,7 @@ let login_data = build_login(Login {
     href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L356">here</a>,
   using the URL and socket that were retrieved from the LoginResponse.
 </div>
-<div class="sinister_bubble">
+<div class="bubble sinister">
   <h1 id="6">Establish Ping</h1>
   <p>
     After the Circuit Code is sent, metaverse servers will begin sending ping messages, to ensure the client is still

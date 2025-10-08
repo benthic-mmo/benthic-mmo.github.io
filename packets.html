@@ -9,9 +9,9 @@ title: Packets
   messages to the Core over UDP. These are handled by the server to client
   process that we started in the <a href="/login#4">previous chapter</a>.
   <hr />
-  <div class="extra_sinister_bubble">
+  <div class="center">
     <div class="bubble-column" style="max-width: 700px">
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h1>1.</h1>
         <p>
           Raw UDP packets enter the Core from
@@ -23,7 +23,7 @@ title: Packets
           the socket.
         </p>
       </div>
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h1>2.</h1>
         <p>
           The raw data is then converted to a
@@ -39,7 +39,7 @@ title: Packets
           function.
         </p>
       </div>
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h1>3.</h1>
         <p>
           The packet's from_bytes functon
@@ -55,7 +55,7 @@ title: Packets
           following data will be.
         </p>
       </div>
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h1>4.</h1>
         <p>
           Handle edgecases like if the packet has no body, or if the packet
@@ -66,7 +66,7 @@ title: Packets
           >.
         </p>
       </div>
-      <div class="contrast_bubble_small">
+      <div class="bubble contrast small">
         <h1>5.</h1>
         <p>
           The combination of the header's

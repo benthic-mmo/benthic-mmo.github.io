@@ -9,7 +9,7 @@ title: Agent
   The agent sruct stores player locations, outfit data, and skeleton data.
   <br />
   <br />
-  <div class="contrast_bubble_small">
+  <div class="bubble contrast small">
     <p>
       Implementing agents requires using the
       <a href="">FetchInventoryDescendents2</a>,
@@ -25,10 +25,10 @@ title: Agent
   Agent data begins the same way all object data does. Through the
   <a href="/objects">ObjectUpdate</a> packet.
 
-  <div class="sinister_bubble">
+  <div class="center">
     <div class="bubble-column" style="max-width: 1000px">
-      <div class="contrast_bubble_small">
-        <h3>1.</h3>
+      <div class="bubble contrast small">
+        <h2>1.</h2>
         <p>
           The type of the ObjectUpdate is determined to be
           <a
@@ -38,8 +38,8 @@ title: Agent
           retreived through a capability endpoint.
         </p>
       </div>
-      <div class="contrast_bubble_small">
-        <h3>2.</h3>
+      <div class="bubble contrast small">
+        <h2>2.</h2>
         <p>
           If the session's
           <a
@@ -50,8 +50,8 @@ title: Agent
           model.
         </p>
       </div>
-      <div class="contrast_bubble_small">
-        <h3>3.</h3>
+      <div class="bubble contrast small">
+        <h2>3.</h2>
         <p>
           Check if the user's inventory has loaded its
           <a
@@ -64,8 +64,8 @@ title: Agent
           later.
         </p>
       </div>
-      <div class="contrast_bubble_small">
-        <h3>4.</h3>
+      <div class="bubble contrast small">
+        <h2>4.</h2>
         <p>
           Add the requested user ID to the
           <a
@@ -75,8 +75,8 @@ title: Agent
           position, and the number of items in the current outfit.
         </p>
       </div>
-      <div class="contrast_bubble_small">
-        <h3>5.</h3>
+      <div class="bubble contrast small">
+        <h2>5.</h2>
         <p>
           <a
             href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L72"
@@ -100,57 +100,59 @@ title: Agent
   >. Each object in the outfit creates a new actor which goes to actix for
   scheduling, which prevents large model downloads from blocking the main
   thread.
-  <div class="bubble-column" , style="max-width: 700px">
-    <div class="contrast_bubble_small">
-      <h3>1.</h3>
-      <p>
-        If the agent asset is an Object,
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L61"
-          >Download it</a
-        >
-        from the ViewerAsset capability endpoint. This will return an LLSD-XML
-        encoded SceneGroup, which will be
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L47"
-          >parsed</a
-        >
-        into a usable SceneGroup object.
-      </p>
-    </div>
-    <div class="contrast_bubble_small">
-      <h3>2.</h3>
-      <p>
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L179"
-          >Download the scenegroup mesh</a
-        >. Each SceneGroup can contain one or several parts, which each contain
-        their own mesh, which needs to be downloaded individually.
-      </p>
-    </div>
-    <div class="contrast_bubble_small">
-      <h3>3.</h3>
-      <p>
-        Download each scene's
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L60"
-        >
-          mesh
-        </a>
-        individually, and convert to a rust struct.
-      </p>
-    </div>
-    <div class="contrast_bubble_small">
-      <h3>4.</h3>
-      <p>
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L188"
-          >Apply</a
-        >
-        the skin bind shape matrix to the vertices that were received from the
-        server. If this is not done, the vertices will look strange and
-        distorted. Take these modified vertices and store them in the scene.
-      </p>
+  <div class="center">
+    <div class="bubble-column" , style="max-width: 700px">
+      <div class="bubble contrast small">
+        <h2>1.</h2>
+        <p>
+          If the agent asset is an Object,
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L61"
+            >Download it</a
+          >
+          from the ViewerAsset capability endpoint. This will return an LLSD-XML
+          encoded SceneGroup, which will be
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L47"
+            >parsed</a
+          >
+          into a usable SceneGroup object.
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>2.</h2>
+        <p>
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L179"
+            >Download the scenegroup mesh</a
+          >. Each SceneGroup can contain one or several parts, which each
+          contain their own mesh, which needs to be downloaded individually.
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>3.</h2>
+        <p>
+          Download each scene's
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L60"
+          >
+            mesh
+          </a>
+          individually, and convert to a rust struct.
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>4.</h2>
+        <p>
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L188"
+            >Apply</a
+          >
+          the skin bind shape matrix to the vertices that were received from the
+          server. If this is not done, the vertices will look strange and
+          distorted. Take these modified vertices and store them in the scene.
+        </p>
+      </div>
     </div>
   </div>
   {% capture LLSD%}
@@ -159,9 +161,14 @@ title: Agent
   requests will result in XML, some will result in a custom JSON-adjacent
   format, and some will result in a custom whitespace seperated format. These
   can be very confusing and difficult to debug.
-  <div class="bubble-row" style="max-width: 700px">
-    <div class="sinister_bubble">
-      <h3>Item</h3>
+  <div class="bubble-row">
+    <div class="bubble sinister">
+      <h3>
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L53"
+          >Item</a
+        >
+      </h3>
       <a href="https://wiki.secondlife.com/wiki/LLSD#Notation_Serialization">
         Notation Serialization</a
       >
@@ -204,8 +211,13 @@ textures 1
 2 5748decc-f629-461c-9a36-a35a221fe21f
       </code></pre>
     </div>
-    <div class="sinister_bubble">
-      <h3>Mesh</h3>
+    <div class="bubble sinister">
+      <h3>
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L60"
+          >Mesh</a
+        >
+      </h3>
       <a href="https://wiki.secondlife.com/wiki/Mesh/Mesh_Asset_Format">
         Mesh Asset Format
       </a>
@@ -234,8 +246,13 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
       magic number for decompressing each section. Once decompressed, the data
       is encoded in the same binary llsd format that the header is.
     </div>
-    <div class="sinister_bubble">
-      <h3>SceneGroup</h3>
+    <div class="bubble sinister">
+      <h3>
+        <a
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L47"
+          >SceneGroup</a
+        >
+      </h3>
       <a href="https://wiki.secondlife.com/wiki/LLSD#XML_Serialization">
         XML Serialization
       </a>
@@ -275,4 +292,14 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
   </div>
   {% endcapture %} {% include evil_benthic.html content=LLSD%}
 </div>
-<div class="bubble"></div>
+<div class="bubble sinister">
+  <h1>Skeleton</h1>
+  Skeleton handling in open metaverse projects can be tricky. The assumption
+  from the server is that each client will have its own downloaded base
+  skeleton, which all skinned meshes will apply transforms to.
+  <br />
+  When we retreive an object with a Skin attribute, we need to create a
+  representation of its skeleton in code, so we can apply the transforms and
+  bake it into a single, global agent skeleton which transforms every mesh in
+  the scenegroup.
+</div>

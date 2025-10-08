@@ -25,8 +25,9 @@ title: Terrain
   body data. This is because the body parsing is very complex, and should be
   handled asyncronously, from the environment crate.
 
+  <div class="center">
   <div class="bubble-column" style="max-width: 500px">
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
       <h3>1.</h3>
       <p>
         The LayerData is received from the sever from the
@@ -36,7 +37,7 @@ title: Terrain
         >
       </p>
     </div>
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
       <h3>2.</h3>
       <p>
         The LayerData packet is parsed by the
@@ -46,7 +47,7 @@ title: Terrain
         >, determining the stride, size, and type of the contained layers.
       </p>
     </div>
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
       <h3>3.</h3>
       <p>
         The LayerData packet is received by the mailbox
@@ -56,7 +57,7 @@ title: Terrain
         >, without fully parsing the body yet.
       </p>
     </div>
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
       <h3>4.</h3>
       <p>
         <a
@@ -65,6 +66,7 @@ title: Terrain
         >
         is called on the unstructured body data
       </p>
+    </div>
     </div>
   </div>
   After the layer's
@@ -136,7 +138,7 @@ title: Terrain
     >TerrainHeader::from_bytes()</a
   >
   function.
-  <div class="sinister_bubble">
+  <div class="bubble sinister">
     <h2>Terrain Header</h2>
     <table>
       <tr>
@@ -176,7 +178,7 @@ title: Terrain
         <td>4 or 10 bytes that will be used to determine the XY location.</td>
       </tr>
     </table>
-    <div class="evil_extra_bubble">
+    <div class="bubble evil">
       <h2>Body:</h2>
       <h4>Compressed layer data</h4>
     </div>
@@ -340,7 +342,7 @@ Bytes:     0    0    0   164  65   1    0    8   96 ...
   representation.
 </div>
 
-<div class="sinister_bubble">
+<div class="bubble sinister">
   <h1>Generate Mesh and Stitch Patches</h1>
   When patches are retrieved, there is a gap between them that has to be manually 
   stitched by the client. This is to allow rendering two patches from different 

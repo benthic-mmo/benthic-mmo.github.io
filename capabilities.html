@@ -14,15 +14,15 @@ title: Capabilities
     communication.
   </p>
   <div class="bubble-row">
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
       <h3>1.</h3>
       Send capability request to the server
     </div>
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
       <h3>2.</h3>
       Retrieve capability URL
     </div>
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
       <h3>3.</h3>
       Send and receive requests at that URL
     </div>
@@ -90,50 +90,52 @@ title: Capabilities
     >mailbox</a
   >
   to enable.
-  <div class="bubble-column">
-    <div class="contrast_bubble_small">
-      <h2>1.</h2>
-      <p>
-        The
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L135"
-          >Seed Capability URL</a
-        >
-        is retrieved from the LoginResponse object and saved in the session.
-      </p>
-    </div>
-    <div class="contrast_bubble_small">
-      <h2>2.</h2>
-      <p>
-        The requested capabilities are
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/capabilities.rs#L62"
-        >
-          serialized into LLSD-XML</a
-        >
-        for transport
-      </p>
-    </div>
-    <div class="contrast_bubble_small">
-      <h2>3.</h2>
-      <p>
-        The capabilities are
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L34"
-          >sent to the seed capability URL</a
-        >
-        using a Post, with the body being the LLSD-XML content
-      </p>
-    </div>
-    <div class="contrast_bubble_small">
-      <h2>4</h2>
-      <p>
-        The requested URLs are returned in the
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L41"
-          >response</a
-        >. These URLs will be used for making requests.
-      </p>
+  <div class="center">
+    <div class="bubble-column">
+      <div class="bubble contrast small">
+        <h2>1.</h2>
+        <p>
+          The
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L135"
+            >Seed Capability URL</a
+          >
+          is retrieved from the LoginResponse object and saved in the session.
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>2.</h2>
+        <p>
+          The requested capabilities are
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/capabilities.rs#L62"
+          >
+            serialized into LLSD-XML</a
+          >
+          for transport
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>3.</h2>
+        <p>
+          The capabilities are
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L34"
+            >sent to the seed capability URL</a
+          >
+          using a Post, with the body being the LLSD-XML content
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>4</h2>
+        <p>
+          The requested URLs are returned in the
+          <a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L41"
+            >response</a
+          >. These URLs will be used for making requests.
+        </p>
+      </div>
     </div>
   </div>
   The response will look like this.

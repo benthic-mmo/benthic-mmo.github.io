@@ -34,21 +34,21 @@ title: About
     >primitive_geometry</a
   >. Some of the most useful elements of the ObjectUpdate packet are
   <div class="bubble-row">
-    <div class="contrast_bubble">
+    <div class="bubble contrast">
       <a
         href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/object_update/struct.ObjectUpdate.html#structfield.full_id"
       >
-        <h3>full_id</h3>
+        <h2>full_id</h2>
       </a>
       The full UUID of the object. Can be used to retrieve the full mesh from
       the ViewerAsset endpoint.
     </div>
 
-    <div class="contrast_bubble">
+    <div class="bubble contrast">
       <a
         href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/object_update/struct.ObjectUpdate.html#structfield.pcode"
       >
-        <h3>pcode</h3>
+        <h2>pcode</h2>
       </a>
       <p>
         This u8 number stores the object's
@@ -59,10 +59,10 @@ title: About
       </p>
     </div>
 
-    <div class="contrast_bubble">
+    <div class="bubble contrast">
       <a
         href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/object_update/struct.ObjectUpdate.html#structfield.object_data"
-        ><h3>data</h3></a
+        ><h2>data</h2></a
       >
       <p>
         the data can store an object's xy location and the velocity,
@@ -83,17 +83,19 @@ title: About
   portion of it can be difficult to parse correctly.
   <br />
   The type of update is determined by the length of the data field.
+  <br />
+  <br>
   <div class="bubble-row">
-    <div class="tertiary_bubble">
+    <div class="bubble tertiary">
       <h2>High</h2>
-      <div class="sinister_bubble">
+      <div class="bubble sinister">
         <a
           href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/object_update/index.html#high-precision-update-with-foot-collision-plane"
           ><h3>High Precision Update With Foot Collision Plane</h3></a
         >
         76 bytes
       </div>
-      <div class="sinister_bubble">
+      <div class="bubble sinister">
         <a
           href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/object_update/index.html#high-precision-update"
           ><h3>High Precision Update</h3></a
@@ -101,16 +103,16 @@ title: About
         60 bytes
       </div>
     </div>
-    <div class="tertiary_bubble">
+    <div class="bubble tertiary">
       <h2>Medium</h2>
-      <div class="sinister_bubble">
+      <div class="bubble sinister">
         <a
           href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/object_update/index.html#medium-precision-update-with-foot-collision-plane"
           ><h3>Medium Precision Update With Foot Collision Plane</h3></a
         >
         48 bytes
       </div>
-      <div class="sinister_bubble">
+      <div class="bubble sinister">
         <a
           href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/object_update/index.html#medium-precision-update"
           ><h3>Medium Precision Update</h3></a
@@ -118,9 +120,9 @@ title: About
         32 bytes
       </div>
     </div>
-    <div class="tertiary_bubble">
+    <div class="bubble tertiary">
       <h2>Low</h2>
-      <div class="sinister_bubble">
+      <div class="bubble sinister">
         <a
           href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/object_update/index.html#low-precision-update"
           ><h3>Low Precision Update</h3></a
@@ -134,8 +136,8 @@ title: About
 <div class="bubble">
   <h1>Handling</h1>
   <div class="bubble-row">
-    <div class="contrast_bubble_small">
-      <h3>1.</h3>
+    <div class="bubble contrast small">
+      <h2>1.</h3>
       <p>
         The ObjectUpdate is
         <a
@@ -145,8 +147,8 @@ title: About
         from the UDP socket
       </p>
     </div>
-    <div class="contrast_bubble_small">
-      <h3>2.</h3>
+    <div class="bubble contrast small">
+      <h2>2.</h3>
       <p>
         ObjectUpdate is
         <a
@@ -155,8 +157,8 @@ title: About
         >
       </p>
     </div>
-    <div class="contrast_bubble_small">
-      <h3>2.</h3>
+    <div class="bubble contrast small">
+      <h2>2.</h2>
       <p>
         The
         <a

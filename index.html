@@ -3,16 +3,16 @@ layout: default
 title: Main
 ---
 <div class="bubble">
-  <h1 class="contrast_header">Welcome to the Benthic docs!</h1>
+  <h1>Welcome to the Benthic docs!</h1>
   <h3>Benthic is a project with the goal of enabling developers to easily create fast and straightforward open metaverse
     applications.</h3>
   <hr>
 
   <p>
-  <h1 class="contrast_header">What is Benthic?</h1>
+  <h1>What is Benthic?</h1>
   Benthic is a collection of tools built for accessing the open metaverse, a network of federated 3d virtual worlds
   running the open metaverse protocol.
-  </p>
+  </h1>
 
   <p>These docs aim to be a resource for understanding high-level concepts that surround open metaverse projects. Things
     like handshake flows, rendering pipeline logic, and the assumptions existing metaverse servers make will be
@@ -20,7 +20,7 @@ title: Main
     information.</p>
 </div>
 
-<div class="wavy_bubble" style="padding-top:60px;">
+<div class="bubbl wavy good" style="padding-top:60px;">
   <div class="bubble-row">
     <div class="bubble">
       <h2>Async</h2>
@@ -40,7 +40,7 @@ title: Main
     </div>
 
     <div class="bubble">
-      <h2 class="contrast_header">Modular</h2>
+      <h2>Modular</h2>
       <p>Using rust's feature capabilties, you can compile only the parts of the project you need. Building a metaverse
         chat app? You can use only the parts of the library that you need.</p>
     </div>
@@ -55,7 +55,7 @@ title: Main
   <h3>The benthic project stretches across several repos, containing several different crates. There are three primary
     crates that contain the majority of the project's code.</h3>
   <div class="bubble-row">
-    <div class="contrast_bubble">
+    <div class="bubble contrast">
       <a href="https://github.com/benthic-mmo/metaverse_client">
         <h1>Metaverse Client</h1>
       </a>
@@ -64,14 +64,14 @@ title: Main
       crate, which contain rust
       structs for server data.
     </div>
-    <div class="contrast_bubble">
+    <div class="bubble contrast">
       <a href="https://github.com/benthic-mmo/benthic_viewer">
         <h1>Benthic Viewer</h1>
       </a>
       A simple godot frontend for the metaverse client project. This can be used as a reference for creating other
       viewer projects that implement the backend.
     </div>
-    <div class="contrast_bubble">
+    <div class="bubble contrast">
       <a href="https://github.com/benthic-mmo/metaverse_gltf">
         <h1>Metaverse GLTF</h1>
       </a>
@@ -124,19 +124,19 @@ OpenSimulator
     Alternate docs can be found at docs.rs, containing implementation specific information.
   </p>
   <div class="bubble-row">
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
       <img src="{{ 'images/rust.svg' | relative_url }}" alt="Rust Logo" width="30" height="30">
       <a href="https://docs.rs/metaverse_messages/">
         <h3>Messages Crate</h3>
       </a>
     </div>
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
       <img src="{{ 'images/rust.svg' | relative_url }}" alt="Rust Logo" width="30" height="30">
       <a href="https://docs.rs/metaverse_environment/">
         <h3>Environment Crate</h3>
       </a>
     </div>
-    <div class="contrast_bubble_small">
+    <div class="bubble contrast small">
 
       <img src="{{ 'images/rust.svg' | relative_url }}" alt="Rust Logo" width="30" height="30">
       <a href="https://docs.rs/metaverse_session/">
