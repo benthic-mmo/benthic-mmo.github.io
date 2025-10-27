@@ -7,129 +7,75 @@ title: Renderin
 <div class="bubble">
   <h1>Rendering</h1>
   Model generation is handled by the
-  <a href="https://github.com/benthic-mmo/metaverse_gltf">metaverse_gltf</a>
+  <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/index.html">metaverse_mesh</a>
   crate.
   <br />
   Its main entrypoint is through the
   <a
-    href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L9"
+    href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/skinned_mesh/fn.generate_skinned_mesh.html"
     >generate_skinned_mesh()</a
   >
-  and
+
+  function. It also has C and C# wrappers, called
   <a
-    href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L22"
-    >generate_mesh()</a
-  >
-  functions. Both of these functions also have C and C# wrappers, called
-  <a
-    href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L35"
+    href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/skinned_mesh/fn.generate_skinned_mesh_legacy.html"
     >generate_skinned_mesh_legacy</a
-  >
-  and
-  <a
-    href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L68"
-    >generate_mesh_legacy</a
   >.
   <br />
-  <div class="bubble-row">
     <div class="bubble tertiary">
       <h2>
         <a
-          href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L22"
-          >Generate Mesh</a
+          href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/skinned_mesh/fn.generate_skinned_mesh.html"
+          >Generate Skinned Mesh</a
         >
       </h2>
       <div class="bubble">
         <h2>
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/scene.rs#L32"
-            >SceneGroup</a
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.AvatarObject.html"
+            >AvatarObject</a
           >
         </h2>
-        The function accepts a list of paths to JSON serialized SceneGroup
-        objects
+        The function accepts an AvatarObject, which contains one JSON serialized <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Skeleton.html">skeleton</a> object, and a list of paths to its component <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObjects</a>.
         <br />
-        <a
-          href="https://github.com/benthic-mmo/metaverse_gltf/tree/main/tests/example_json/body.json"
-          >Example</a
-        >
-        <pre><code>{
-  "parts": [
-    {
-      "creator_id": "fb2e5541-66ba-4019-a5de-e8b9286b0914",
-      "folder_id": "00000000-0000-0000-0000-000000000000",
-      "inventory_serial": 0,
-      "name": "body",
-      "pass_touches": false,
-      "pass_collisions": false,
-      "region_x": 256000,
-...
-        </code></pre>
-      </div>
-    </div>
-    <div class="bubble tertiary" style="max-width: 900px">
-      <h2>
-        <a
-          href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L9"
-          >Generate Skinned Mesh</a
-        >
-      </h2>
-      <div class="bubble-row">
-        <div class="bubble">
-          <h2>
-            <a
-              href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/scene.rs#L32"
-              >SceneGroup</a
-            >
-          </h2>
-          The function accepts a list of paths to JSON serialized SceneGroup
-          objects
-          <br />
-          <a
-            href="https://github.com/benthic-mmo/metaverse_gltf/tree/main/tests/example_json/body.json"
-            >Example</a
-          >
-          <pre><code>{
-  "parts": [
-    {
-      "creator_id": "fb2e5541-66ba-4019-a5de-e8b9286b0914",
-      "folder_id": "00000000-0000-0000-0000-000000000000",
-      "inventory_serial": 0,
-      "name": "body",
-      "pass_touches": false,
-      "pass_collisions": false,
-      "region_x": 256000,
-...
-        </code></pre>
-        </div>
-        <div class="bubble">
-          <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L9"
-          >
-            <h2>Skeleton</h2>
-          </a>
+        <pre><code class="language-rust">AvatarObject
 
-          It also accepts a path to a JSON serialized Skeleton objects
-          <br />
-          <a
-            href="https://github.com/benthic-mmo/metaverse_gltf/tree/main/tests/example_json/skeleton.json"
-            >Example</a
-          >
-          <pre><code>{
-  "joints": {
-    "Butt": {
-      "name": "Butt",
-      "transforms": [
-        {
-          "name": "Default",
-          "id": "00000000-0000-0000-0000-000000000000",
-          "transform": [
-            3.802805e-8,
-...
+{
+    "objects": ["/home/skclark/.local/share/benthic/agent/fb2e5541-66ba-4019-a5de-e8b9286b0914/5ac91189-43a4-4c00-97b3-badab08b551e_t-shirt.json", 
+                "/home/skclark/.local/share/benthic/agent/fb2e5541-66ba-4019-a5de-e8b9286b0914/91f0232f-e9e1-45d0-8b88-ddf01a715fbf_overalls.json", 
+                "/home/skclark/.local/share/benthic/agent/fb2e5541-66ba-4019-a5de-e8b9286b0914/44a3f658-bf47-4767-8450-6c9042efac5f_Curves.json", 
+                "/home/skclark/.local/share/benthic/agent/fb2e5541-66ba-4019-a5de-e8b9286b0914/7e6d3d00-6ad8-4041-a809-7fda0fc4a4fb_body.json"],
+    "global_skeleton": {
+        "joints": {
+            "Butt": {
+                "name": "Butt",
+                "transforms": [{
+                    "name": "Default",
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "transform": [3.802805e-8, -1.0000001, 1.6506195e-7, -0.0, -1.0000001, -3.8027313e-8, 0.00000114482, 0.0, -0.0000011448196, -3.207441e-8, -1.0000004, 0.0, -0.00000185084, -0.055000454, -1.7398628, 1.0],
+                    "rank": 0
+                }],...
         </code></pre>
-        </div>
+
+              <div class="bubble sinister">
+        <h2><a href="https://docs.rs/metaverse_messages/0.2.0/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObject</a></h2>
+        The RenderObject contains the mesh data and local skeleton for each component object.
+        <pre><code class="language-rust">RenderObject
+
+[{
+        "name": "t-shirt",
+        "id": "5ac91189-43a4-4c00-97b3-badab08b551e",
+        "vertices": [
+                [0.04588852, -0.16824126, 0.7088021],
+                [0.04042725, -0.1912551, 0.71027595],
+                [0.04245572, -0.1912551, 0.7064233],
+                [0.0685799, -0.056631688, 0.71403205],
+                [0.061838612, -0.0696567, 0.7208681],
+                [0.06817527, -0.07142272, 0.71457577],,...
+        </code></pre>
       </div>
-    </div>
+      </div>
+
   </div>
   Example rust usage of this crate can be found in the
   <a href="https://github.com/benthic-mmo/metaverse_gltf/tree/main/tests"

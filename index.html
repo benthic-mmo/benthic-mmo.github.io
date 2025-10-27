@@ -60,7 +60,7 @@ title: Main
 <div class="bubble">
   <h1>Getting Started</h1>
   <p>
-  <h3>The benthic project stretches across several repos, containing several different crates. There are three primary
+  <h3>The benthic project stretches across several repos, containing several different crates. There are four primary
     crates that contain the majority of the project's code.</h3>
   <div class="bubble-row">
     <div class="bubble contrast">
@@ -77,14 +77,19 @@ title: Main
         <h1>Benthic Viewer</h1>
       </a>
       A simple godot frontend for the metaverse client project. This can be used as a reference for creating other
-      viewer projects that implement the backend.
+      viewer projects that implement the core.
     </div>
     <div class="bubble contrast">
       <a href="https://github.com/benthic-mmo/metaverse_gltf">
-        <h1>Metaverse GLTF</h1>
+        <h1>Metaverse Mesh</h1>
       </a>
-      GLTF rendering for client and server projects. Converts JSON SceneObject data into usable GLTFs which can be used
-      by servers to create GLTF serving endpoints, or clients to render GLTF files out of raw data sent from the server.
+      mesh file generation for client and server projects. Converts JSON files of mesh data into usable file formats which can be used
+      by servers to create 3d file serving endpoints, or clients to easily render objects using common 3d file formats.
+    </div>
+    <div class="bubble contrast">
+      <a href="https://github.com/benthic-mmo/serde-llsd">
+        <h1>Serde LLSD</h1>
+      </a> A fork of John Nagle's <a href="https://github.com/John-Nagle/serde-llsd">serde-llsd</a>, containing extra serializing and deserializing functions that include non-documented protocols, and somewhat niche types used by the project like XMLRPC. 
     </div>
   </div>
   <br>
@@ -93,7 +98,9 @@ title: Main
 benthic_project/
   ├── metaverse_client/
   ├── metaverse_gltf/
-  └── benthic_viewer/
+  ├── benthic_viewer/
+  └── serde-llsd/
+
 OpenSimulator
   └── bin/
     </code></pre>
@@ -103,6 +110,15 @@ OpenSimulator
     here
   </a> and run locally, or connect to an existing server using your username and password for that grid.
   <br>
+  
+
+  {% capture Warn %}
+  <h2>Local Testing</h2>
+  Due to the way the opensim server capability endpoint urls work, you must be connected to a wifi network to test, even when running both server and client locally.  
+  {% endcapture %}
+
+  {% include evil_benthic.html content=Warn %}
+
   <br>
   The majority of the business logic lives in metaverse_client, and will be "home base" when developing.
   Each crate within metaverse_client has its own depenencies, and can be built and tested independently from each other.
@@ -116,7 +132,8 @@ OpenSimulator
   metaverse_environment = {path = "../environment/"}
   metaverse_agent = {path = "../agent/"}
   metaverse_inventory = {path = "../inventory/"}
-  metaverse_gltf = {path = "../../../metaverse_gltf/"}
+  metaverse_gltf = {path = "../../../metaverse_mesh/"}
+  benthic-serde-llsd = {path = "../../../serde-llsd/"}
   // more dependencies ...
     </code></pre>
   Metaverse_client contains a debug UI, and can be run as a standalone project using
@@ -145,10 +162,39 @@ OpenSimulator
       </a>
     </div>
     <div class="bubble contrast small">
-
       <img src="{{ 'images/rust.svg' | relative_url }}" alt="Rust Logo" width="30" height="30">
-      <a href="https://docs.rs/metaverse_session/">
-        <h3>Session Crate</h3>
+      <a href="https://docs.rs/metaverse_core/">
+        <h3>Core Crate</h3>
+      </a>
+    </div>
+    <div class="bubble contrast small">
+      <img src="{{ 'images/rust.svg' | relative_url }}" alt="Rust Logo" width="30" height="30">
+      <a href="https://docs.rs/metaverse_agent/">
+        <h3>Agent Crate</h3>
+      </a>
+    </div>
+    <div class="bubble contrast small">
+      <img src="{{ 'images/rust.svg' | relative_url }}" alt="Rust Logo" width="30" height="30">
+      <a href="https://docs.rs/benthic_ui/">
+        <h3>Bevy plugin</h3>
+      </a>
+    </div>
+    <div class="bubble contrast small">
+      <img src="{{ 'images/rust.svg' | relative_url }}" alt="Rust Logo" width="30" height="30">
+      <a href="https://docs.rs/metaverse_inventory/">
+        <h3>Inventory Crate</h3>
+      </a>
+    </div>
+    <div class="bubble contrast small">
+      <img src="{{ 'images/rust.svg' | relative_url }}" alt="Rust Logo" width="30" height="30">
+      <a href="https://docs.rs/metaverse_mesh/">
+        <h3>Mesh Crate</h3>
+      </a>
+    </div>
+    <div class="bubble contrast small">
+      <img src="{{ 'images/rust.svg' | relative_url }}" alt="Rust Logo" width="30" height="30">
+      <a href="https://docs.rs/serde-llsd-benthic/">
+        <h3>Serde LLSD crate</h3>
       </a>
     </div>
   </div>

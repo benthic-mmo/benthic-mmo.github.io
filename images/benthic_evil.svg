@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="232.05405mm"
-   height="232.05406mm"
-   viewBox="0 0 232.05405 232.05406"
+   width="176.15094mm"
+   height="149.97775mm"
+   viewBox="0 0 176.15094 149.97775"
    version="1.1"
    id="svg1"
    inkscape:export-filename="benthic_evil.svg"
@@ -35,14 +35,23 @@
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg1" />
+     inkscape:current-layer="svg1">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="176.15094"
+       height="149.97775"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
   <defs
      id="defs1" />
   <circle
      style="display:none;fill:#ffc022;fill-opacity:1;stroke-width:10.2754;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.9"
      id="path8"
-     cx="120.77028"
-     cy="114.56757"
+     cx="83.292854"
+     cy="91.92543"
      r="122.59459"
      inkscape:export-filename="benthic_round.svg"
      inkscape:export-xdpi="300"
@@ -52,12 +61,12 @@
      id="rect8"
      width="232.05405"
      height="232.05405"
-     x="-2.9677354e-15"
-     y="1.065627e-14" />
+     x="-37.477425"
+     y="-22.642143" />
   <g
      id="g6"
      style="display:inline;fill:#515bac;fill-opacity:1"
-     transform="translate(10.945942,9.8513489)">
+     transform="translate(-26.531483,-12.790796)">
     <path
        style="fill:#515bac;fill-opacity:1;stroke-width:10.2754;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.9"
        d="M 84.435027,66.478857 H 103.26891 Z"
@@ -77,7 +86,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(12.405402,49.621619)">
+     transform="translate(-25.072023,26.979474)">
     <path
        id="path7"
        d="m 59.564453,38.091797 c -18.184776,0 -32.958685,17.263653 -33.240234,38.685547 0.281549,21.421893 15.055458,38.683596 33.240234,38.683596 18.184776,0 32.960638,-17.261703 33.242188,-38.683596 C 92.525091,55.35545 77.749229,38.091797 59.564453,38.091797 Z"
@@ -115,13 +124,13 @@
   </g>
   <path
      style="opacity:1;fill:none;fill-opacity:1;stroke:#515bac;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none;stroke-opacity:1"
-     d="M 104.79791,76.330206 C 108.73269,13.474851 60.644173,24.696037 55.10703,48.859649"
+     d="M 67.320485,53.688061 C 71.255265,-9.1672938 23.166748,2.0538922 17.629605,26.217504"
      id="path10"
      sodipodi:nodetypes="cc" />
   <circle
      style="opacity:1;fill:none;fill-opacity:1;stroke:#515bac;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none;stroke-opacity:1"
      id="path11"
-     cx="55.240646"
-     cy="55.781433"
+     cx="17.763222"
+     cy="33.139286"
      r="6.9133086" />
 </svg>

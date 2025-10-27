@@ -66,31 +66,31 @@ title: Login
   </p>
   <div class="bubble-row">
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.first">
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.first">
       <div class="bubble tertiary small">
         First Name
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.last">
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.last">
       <div class="bubble tertiary small">
         Last Name
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.passwd">
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.passwd">
       <div class="bubble tertiary small">
         Password
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.start">
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.start">
       <div class="bubble tertiary small">
         Start
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.channel">
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.channel">
       <div class="bubble tertiary small">
         Channel
       </div>
@@ -102,24 +102,25 @@ title: Login
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.read_critical">
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.read_critical">
       <div class="bubble tertiary small">
         Read Critical
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.url">
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.url">
       <div class="bubble tertiary small">
         URL
       </div>
     </a>
   </div>
-    Each label will bring you to the docs.rs page describing the field.
+    Though this is all the information you need from the user, this is not all the information you'll need to create a valid LoginRequest XML. This information is collected from the user in the UI and sent to the core as a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/message/enum.UIResponse.html">UIResponse</a>. More information about core and UI communication can be found <a href="/core">here</a>.
     <br>
+  <br>
     An example login would look something like this.
 
   <pre><code class="language-rust">
-let login_data = build_login(Login {
+let login_data = Login {
     first: "default".to_string(),
     last: "user".to_string(),
     passwd: "password".to_string(),
@@ -127,7 +128,7 @@ let login_data = build_login(Login {
     channel: "benthic".to_string(),
     agree_to_tos: true,
     read_critical: true,
-});
+};
     </code></pre>
 
   {% capture start-field %}
@@ -142,37 +143,7 @@ let login_data = build_login(Login {
   </p>
   {% endcapture %}
 
-
   {% include evil_benthic.html content=start-field %}
-  <p>
-    In Benthic, the login is sent as a packet from the UI to the core. To do this, it serializes the login data as a
-    packet, and sends the bytes on the UDP socket established <a href="/core">earlier</a>.
-  </p>
-  <div class=bubble-row>
-    <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/login.rs#L107">
-      <div class="bubble contrast small">
-        <h3>UI Login Send</h3>
-      </div>
-    </a>
-    <div class="bubble contrast small">
-      {% include arrow.html %}
-    </div>
-    <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L79">
-      <div class="bubble contrast small">
-        <h3>Core Login Receive</h3>
-      </div>
-    </a>
-  </div>
-  <div class="bubble evil">Benthic's
-    <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/ui/login.rs">"login
-      packet"</a>
-    is a custom packet not in the spec that is only used for sending minimal information between the UI and the core
-    using
-    the existing UDP. There are no packets used for login in the spec.
-  </div>
 
 </div>
 <div class="bubble sinister">
@@ -182,128 +153,93 @@ let login_data = build_login(Login {
   <br>
   <br>
   The first thing that must happen is the raw <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html">Login</a>
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html">Login</a>
   data must be converted to XML-RPC that can be sent to the login
-  server. This is done here in <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/simulator_login_protocol/struct.SimulatorLoginProtocol.html#method.new">SimulatorLoginProtocol::new()</a>
-  .<br>
+  server. The first step of this is done by creating a new <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/simulator_login_protocol/struct.SimulatorLoginProtocol.html">SimulatorLoginProtocol</a> object from the Login UIResponse.<br>
   The <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/simulator_login_protocol/index.html">SimulatorLoginProtocol</a>
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/simulator_login_protocol/struct.SimulatorLoginProtocol.html">SimulatorLoginProtocol</a>
   is a large structure that is used by the server to create a login response. It contains
-  far more fields than just the username and password, and should be populated by the client. Docs for the
-  structure itself can be found <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/simulator_login_protocol/struct.SimulatorLoginProtocol.html#fields">here.
-  </a>
+  far more fields than just the username and password, and should be populated by the core using the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/simulator_login_protocol/struct.SimulatorLoginProtocol.html#method.new">new</a> function in the object.
   <hr>
   Now that we have a <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/simulator_login_protocol/struct.SimulatorLoginProtocol.html#fields">SimulatorLoginProtocol</a>
-  object, we can serialize that into xml-rpc, and send it to the url included
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/simulator_login_protocol/struct.SimulatorLoginProtocol.html">SimulatorLoginProtocol</a>
+  object, we can serialize that into xml-rpc using the <a href="https://github.com/benthic-mmo/serde-llsd/blob/main/src/ser/xml_rpc.rs">serde-llsd-benthic</a> crate, and send it to the url included
   in the login.
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/login/login_xmlrpc.rs#L72">
-    Send_login_xmlrpc()
-  </a> is called, which creates an xml-rpc request to send to the server.
-  <br>Benthic's xml-rpc-rs crate handles
-  the sending and receiving of the response, parsing the login result as a <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#fields">LoginResponse</a>
-  object, or a <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_errors/struct.LoginError.html#fields">LoginError</a>.
-
-  {% capture xmlrpc_content %}
-  <h2>Benthic xml-rpc-rs</h2>
-  <p>
-    The benthic repo contains a custom fork of xml-rpc-rs, which contains <a
-      href="https://github.com/benthic-mmo/xml-rpc-rs/commits?author=wgahnagl"> two new commits </a>. These commits
-    allow values to be parsed from Options, since many of the login fields are marked as optional in the spec. The fork
-    also allows the library to receive multipart xml-rpc. Finding an adequate xml-rpc library can be difficult as many
-    libraries for it have been abandoned by their creators.
-  </p>
-  {% endcapture %}
-  {% include evil_benthic.html content=xmlrpc_content %}
+    href="https://docs.rs/metaverse_core/latest/metaverse_core/transport/http_handler/fn.login_to_simulator.html">
+    login_to_simulator()
+  </a> is called, which creates an xml-rpc post, sends it to the server, and awaits the response.
 </div>
 <div class="bubble extra_sinister">
   <h1 id="3">Handle LoginResponse</h1>
-  <p>
-    The
-    <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#fields">LoginResponse</a>
-    object is an even larger xml-rpc object, that is sent from the server in response to a successful
-    login attempt. On receive, this is <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L117">serialized
-      into JSON bytes</a> and sent back to the UI as a <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/ui/ui_events.rs#L16">UI
-      Event packet</a>. Serializing the LoginResponse from XML-RPC to JSON shrinks the size of the data significantly,
-    and allows for faster transport.
-    <br>
-  </p>
+  Once the post request is sent, the response is <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/http_handler.rs#L29">awaited</a>, and the response <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/http_handler.rs#L37">parsed</a>. The resulting login response is contained in the enum <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/enum.LoginStatus.html">LoginStatus</a>, which can contain both a success and a failure. On success, a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html">LoginResponse</a> object is created, which contains all of the fields necessary for running a full metaverse client.
+  <br>
+  There are many fields in the LoginResponse object that are unused, or are unknown what their function once was. Only a small subset of the struct is used by the server to establish the session.
+  <br> 
+  <div class="bubble-row">
+    <div class="bubble good">
+      <h3><a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.first_name">first_name</a></h3>
+      First name of the logged in user. Not necessarily useful, considering the first name should already be known by the client at this point. 
+    </div>
+    <div class="bubble good">
+      <h3><a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.last_name">last_name</a></h3>
+      Last name of the logged in user. Also should be known at this point. 
+    </div>
+    <div class="bubble good">
+      <h3><a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.agent_id">agent_id</a></h3> 
+      Agent ID of the user. This will be used globally to differentiate the client's user from other users, and send messages as coming from the user.
+    </div>
+    <div class="bubble good">
+      <h3><a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.session_id">session_id</a></h3>
+      ID of the session. This will be used globally to inform the server about which session messages are being sent from. 
+    </div>
+    <div class="bubble good">
+      <h3><a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.sim_ip">sim_ip</a></h3>
+      IP of the server. Used by the session to establish a UDP connection.
+    </div>
+    <div class="bubble good">
+      <h3><a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.sim_port">sim_port</a></h3>
+      The port opened by the server for the core to establish the UDP connection. 
+    </div>
+    <div class="bubble tertiary">
+      <h3><a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.seed_capability">seed_capability</a></h3>
+      The base URL used for retrieving <a href="/capabilites">capability</a> urls.
+      <br>
+      Optional if your client does not support capability endpoints.
+    </div>
+  </div>
 </div>
 <div class="bubble">
   <h1 id="4">
     Initialize Session
   </h1>
-  Now that we have the LoginResponse, we have all the information we need to complete the authentication handshake. Not
-  all of the fields in LoginResponse are documented or used, but a few of them are necessary for establishing the
-  session.
-  <div class="bubble-row">
-    <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.sim_port">
-      <div class="bubble tertiary small">
-        sim_port
-      </div>
-    </a>
-    <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.sim_ip">
-      <div class="bubble tertiary small">
-        sim_ip
-      </div>
-    </a>
-    <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.agent_id">
-      <div class="bubble tertiary small">
-        agent_id
-      </div>
-    </a>
-    <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.session_id">
-      <div class="bubble tertiary small">
-        session_id
-      </div>
-    </a>
-    <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_response/struct.LoginResponse.html#structfield.seed_capability_url">
-      <div class="bubble tertiary small">
-        seed_capability_url
-      </div>
-    </a>
-  </div>
-  Each field links to its definition in docs.rs, which includes more information about its use.
+  Now that we have the LoginResponse, we have all the information we need to complete the authentication handshake.
   <br>
-  These are used to create a <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L59">Session</a>
-  object. This is sent to the mailbox, to set the global values that are required throughout the runtime. The session is
-  created <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L268">here</a>,
-  which opens up another UDP socket which asyncronously listens for events coming from the server. This socket is
-  selected here in <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/initialize.rs#L66">initialize()</a>.
-  There are now three UDP sockets open on the machine.
+  The LoginResponse data is used to create a <a
+    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Session.html">Session</a>
+  object <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/session.rs#L369">here</a>. This is sent to the mailbox, to set the global values that are required throughout the runtime. The session object is then handled by the <a
+    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CSession%3E-for-Mailbox">mailbox</a>,
+  which opens up another UDP socket which asyncronously listens for events coming from the server, using the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.sim_ip">sim_ip</a> and <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.sim_port">sim_port</a> provided by the login response.
+  <hr>
+  There are now three UDP sockets listening on the machine.
   <div class="bubble-row">
     <div class="bubble sinister">
       <a
-        href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/ui/src/main.rs#L329">
+        href="https://docs.rs/metaverse_core/latest/metaverse_core/transport/ui_event_listener/fn.listen_for_ui_messages.html">
         <div class="bubble-row">
           <div class="bubble tertiary small">
             UI to Client
           </div>
       </a>
       <a
-        href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/initialize.rs#L92">
+        href="https://docs.rs/benthic_ui/latest/benthic_ui/subscriber/fn.listen_for_core_events.html">
         <div class="bubble tertiary small">
           Client to UI
         </div>
       </a>
       <a
-        href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L293">
+        href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#method.start_udp_read">
         <div class="bubble tertiary small">
           Client to Server
         </div>
@@ -312,48 +248,44 @@ let login_data = build_login(Login {
 
   </div>
   <div class="bubble contrast small">
-    Server to Client
+    <h3>Server to Client</h3>
   </div>
 </div>
 </div>
 <div class="bubble">
   <h1 id="5">Circuit Code</h1>
   With the session populated, we can begin the circuit code handshake. The <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/circuit_code/index.html">Circuit Code</a>
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/circuit_code/index.html">Circuit Code</a>
   is a way of establishing initial
   contact between the server and the client. This is the first UDP packet that must be sent before any other
   communication is possible.
   <hr>
-  The core_subscriber creates a new packet called <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L163">
-    CircuitCodeData.</a> It then sends the packet to the mailbox, where it will then be sent to the server <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L356">here</a>,
-  using the URL and socket that were retrieved from the LoginResponse.
+  This is sent to the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L163">mailbox</a>, which handles it as an outgoing packet and <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/session.rs#L297">sends</a> it to the server via UDP using the URL and socket that were retrieved from the LoginResponse.
 </div>
 <div class="bubble sinister">
   <h1 id="6">Establish Ping</h1>
   <p>
     After the Circuit Code is sent, metaverse servers will begin sending ping messages, to ensure the client is still
     active. The <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/start_ping_check/index.html">StartPingCheck</a>
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/start_ping_check/index.html">StartPingCheck</a>
     packet will be sent from the server to the client. The server must respond with a <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/complete_ping_check/index.html">CompletePingCheck</a>
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/complete_ping_check/index.html">CompletePingCheck</a>
     packet, or else you will be logged out eventually.
     <br>
     <br>
     When the mailbox <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L200">receives
+      href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CPing%3E-for-Mailbox">receives
       a ping packet</a>, it automatically responds, which is then used to calculate the latency from the server and the
     client.
     <br>
-    Information about packet handling can be found on the <a href="/packets">packet handling</a> page.
+    More information about packet handling can be found on the <a href="/packets">packet handling</a> page.
   </p>
 </div>
 
 <div class="bubble">
   <h1 id="7">Complete Agent Movement</h1>
   The next step of the handshake is the <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/complete_agent_movement/index.html">Complete
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/complete_agent_movement/index.html">Complete
     Agent Movement</a> packet. This should be sent when you want your user's avatar to be rendered into the world. At
   this point you have successfully authenticated with the metaverse server, and your avatar should be rendering in the
   world!

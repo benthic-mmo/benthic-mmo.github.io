@@ -12,9 +12,9 @@ title: Agent
   <div class="bubble contrast small">
     <p>
       Implementing agents requires using the
-      <a href="">FetchInventoryDescendents2</a>,
-      <a href="">FetchLibDescendents2</a>, and
-      <a href="">ViewerAsset</a>
+      <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.FetchInventoryDescendents2">FetchInventoryDescendents2</a>,
+      <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.FetchLibDescendents2">FetchLibDescendents2</a>, and
+      <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.ViewerAsset">ViewerAsset</a>
       endpoints, along with the
       <a href="/inventory">inventory crate</a> enabled. If you are unfamiliar
       with how capabilities work, visit
@@ -32,8 +32,8 @@ title: Agent
         <p>
           The type of the ObjectUpdate is determined to be
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L41"
-            >Agent </a
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L41"
+            >Avatar </a
           >. Agent data is handled through the
           <a href="/inventory">Inventory</a> system, and must be retreived
           through a <a href="/capabilities">capability endpoint</a>.
@@ -44,7 +44,7 @@ title: Agent
         <p>
           If the session's
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L45"
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L45"
           >
             agent ID is equal to the message's ID </a
           >, then the objectUpdate is requesting to render the current user's
@@ -56,7 +56,7 @@ title: Agent
         <p>
           Check if the user's inventory has loaded its
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L46"
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L46"
             >CurrentOutfit</a
           >
           yet. This is done using the <a href="/inventory">inventory</a>, which
@@ -70,7 +70,7 @@ title: Agent
         <p>
           Add the requested user ID to the
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L56"
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L56"
             >agent_list</a
           >, the session-global list of all agents. This will contain its ID,
           position, and the number of items in the current outfit.
@@ -80,7 +80,7 @@ title: Agent
         <h2>5.</h2>
         <p>
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L72"
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L72"
             >Download</a
           >
           all of the assets from the inventory's CurrentOutfit folder. This
@@ -94,13 +94,10 @@ title: Agent
 </div>
 <div class="bubble">
   <h1>Fetch assets from ViewerAsset endpoint</h1>
-  Downloading agent assets is triggered asyncronously from
+  Downloading agent assets is handled by the mailbox using a
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/objects.rs#L72"
-    >here</a
-  >. Each object in the outfit creates a new actor which goes to actix for
-  scheduling, which prevents large model downloads from blocking the main
-  thread.
+    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CDownloadAgentAsset%3E-for-Mailbox"
+    >DownloadAgentAsset</a> message. Each object in the outfit is sent individually to the mailbox for handling, which allows actix to schedule each download asyncronously, preventing bottlenecks.
   <br>
   <br>
   The ViewerAsset endpoint expects requests in the format of
@@ -112,24 +109,24 @@ title: Agent
     <code>http://da4b15ea-1d97-4140-afe3-2dd1ce5560710000?bodypart_id=da4b15ea-1d97-4140-afe3-2dd1ce5560710000</code></pre>
     If the agent asset is an Object,
     <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L61"
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L61"
       >Download it</a
     >
     from the ViewerAsset capability endpoint. This will return an LLSD-XML
     encoded SceneGroup, which will be
     <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L47"
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/http_handler.rs#L83"
       >parsed</a
     >
     into a usable SceneGroup object for further operations.
     <br />
     <br />
-    If the object is an Item,
+    If the object is a Link,
     <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L102"
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L98"
       >download it
     </a>
-    and add it directly to the agent list.
+    and add it directly to the agent list as an Item.
   </p>
   {% capture LLSD%}
   <h2>LLSD Formats</h2>
@@ -143,7 +140,7 @@ title: Agent
     <div class="bubble sinister">
       <h3>
         <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L53"
+          href="https://docs.rs/metaverse_core/latest/metaverse_core/transport/http_handler/fn.download_item.html"
           >Item</a
         >
       </h3>
@@ -192,7 +189,7 @@ textures 1
     <div class="bubble sinister">
       <h3>
         <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L60"
+          href="https://docs.rs/metaverse_core/latest/metaverse_core/transport/http_handler/fn.download_mesh.html"
           >Mesh</a
         >
       </h3>
@@ -231,7 +228,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
     <div class="bubble sinister">
       <h3>
         <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L47"
+          href="https://docs.rs/metaverse_core/latest/metaverse_core/transport/http_handler/fn.download_object.html"
           >SceneGroup</a
         >
       </h3>
@@ -239,8 +236,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
         XML Serialization
       </a>
       The SceneGroup returns much more standard XML.
-      <pre><code class="language-xml">
-&lt;SceneObjectGroup&gt;
+      <pre><code class="language-xml">&lt;SceneObjectGroup&gt;
   &lt;RootPart&gt;
     &lt;SceneObjectPart xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; 
         xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
@@ -280,7 +276,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
     Each SceneGroup can contain one or several parts, which each contain their
     own mesh. Each mesh needs to be
     <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L184"
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/http_handler.rs#L96"
       >downloaded individually</a
     >.
   </p>
@@ -294,12 +290,12 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
     </a>
     and
     <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L188"
+      href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L193"
       >Apply</a
     >
     the skin
     <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/mesh.rs#L500"
+      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/mesh/struct.Skin.html#structfield.bind_shape_matrix"
       >bind shape matrix</a
     >
     to the vertices retreived from the server. If the bind shape matrix is not
@@ -333,7 +329,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
   used to request the mesh from the ViewerAsset endpoint. Unintuitively, this is
   found in the scene's
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/scene.rs#L639"
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/scene/struct.Sculpt.html#structfield.texture"
   >
     sculpt texture</a
   >. The sculpt data in the SceneGroup is an artifact from the days of
@@ -351,7 +347,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
   from the server is that each client will have its own downloaded base
   skeleton, which all skinned meshes will use as a reference when managing their bone structure.
   <br>
-<a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L72">create_skeleton()</a> begins the process of handling the skeleton for the individual SceneObject. 
+<a href="https://docs.rs/metaverse_agent/latest/metaverse_agent/skeleton/fn.create_skeleton.html">create_skeleton()</a> begins the process of handling the skeleton for the individual SceneObject. 
 
   <br>
   <br>
@@ -367,12 +363,12 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
     </div>
   <br>
   <br>
-  This skeleton is made useable by the <a href="https://github.com/benthic-mmo/metaverse_client/blob/main/crates/agent/build.rs">build.rs</a> build script that is run at compile time. This generates a <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L9">Skeleton</a> object, which can be placed <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/agent/src/skeleton.rs#L34">in code</a> as a fully defined skeleton with the default transforms.
+  This skeleton is made useable by the <a href="https://github.com/benthic-mmo/metaverse_client/blob/main/crates/agent/build.rs">build.rs</a> build script that is run at compile time. This generates a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Skeleton.html">Skeleton</a> object, which can be placed <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/agent/src/skeleton.rs#L34">in code</a> as a fully defined skeleton with the default transforms.
 
   <br>
   {% capture Skele %}
   <h1>IBMs</h1>
-  The reason the default skeleton is necessary is because the server does not store the joint rotations. The <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/mesh.rs#L496">IBM</a> field in the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/mesh.rs#L23">Mesh</a> object's Skin is retrieved from the server as almost exclusively the identity matrix. 
+  The reason the default skeleton is necessary is because the server does not store the joint rotations. The <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/mesh/struct.Skin.html#structfield.inverse_bind_matrices">IBM</a> field in the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/mesh/struct.Mesh.html">Mesh</a> object's Skin is retrieved from the server as almost exclusively the identity matrix. 
 
     <div class="bubble-row">
       <div class="img-column">
@@ -468,7 +464,7 @@ Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
 
   The skeleton hierarchy is stored in the default skeleton. By this point. all joints know their parent and their children. 
   <br>
-  in order to determine the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/agent/src/skeleton.rs#L108">local transforms</a>, a simple calculation is done on each joint. 
+  in order to determine the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/agent/src/skeleton.rs#L105">local transforms</a>, a simple calculation is done on each joint. 
   <div class="bubble small">
     <h2>Parent</h2> * <h2>Child Inverse</h2>
   </div>
@@ -477,11 +473,15 @@ Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
   <h1>
     Save JSON
   </h1>
-  Now that we have the full SceneObject, and have stored and handled its skeleton, we are almost ready for rendering. The rendering component expects SceneGroup objects serialized into JSON. The handled object gets <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L78">written to disk</a>, where it will later be read in order to create a full 3d model.
+  Now that we have the full SceneObject and handled its skeleton, we are almost ready for rendering. The rendering component expects the path to an <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.AvatarObject.html">AvatarObject</a> serialized as JSON.
+<br>
+AvatarObjects contain a serialized <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Skeleton.html">Skeleton</a> object, which represents the global skeleton of the avatar, and a list of paths to the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObjects</a> which contain the vertices and indices of each component mesh. This allows previews to be generated from individual RenderObjects, or outfit objects to be updated, without having to parse or regenerate entire files.
+<br>
+The handled object gets <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L73">written to disk</a>, where it will be added to a full AvatarObject once the rest of the outfit has downloaded.
 </div>
 <div class="bubble sinister">
   <h1>Agent List</h1>
-  The agent list is the list of all agents visible to the user, including itself. Once an object is ready to be rendered, it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L209">adds it</a> to the list of outfit items in the agent list. 
+  The agent list is the list of all agents visible to the user, including itself. Once an object is ready to be rendered, it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L239">adds it</a> to the list of outfit items in the agent list. 
   <br>
 {% capture GlobalSkeleton %}
   <h1>Global Skeleton</h1>
@@ -490,24 +490,12 @@ Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
   For example, a model might have a "body" object that has custom joint positions for every joint. The player might then have a "shirt" object equipped that has different joint positions for joints that the body has already morphed. Depending on which one loads first, the shirt or the body's transforms might be applied to the global skeleton, and the model will render looking deformed. 
   <br>
   <br>
-  To handle this, each <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L19">joint</a> in the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L9">skeleton</a> object stores its transforms as a vector. Each transform then has a <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/utils/skeleton.rs#L52">rank</a> which is <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/agent/src/skeleton.rs#L139">increased</a> when multiple objects load in with the same joint transform values. The Transform vector is organized in order of highest to lowest transform rank, with the highest always being the one that renders.
+  To handle this, each <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Joint.html">joint</a> in the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Skeleton.html">skeleton</a> object stores its transforms as a vector. Each transform then has a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Transform.html#structfield.rank">rank</a> which is <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/agent/src/skeleton.rs#L144">increased</a> when multiple objects load in with the same joint transform values. The Transform vector is organized in order of highest to lowest transform rank, with the highest always being the one that renders.
   <br>
   <br>
   Each time an object is added to an agent through the agent list, the model's transforms are added to the global agent skeleton. 
   {% endcapture %} {% include evil_benthic.html content=GlobalSkeleton %}
 
-  If we have received all of the outfit items required for the model, then  it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L125">requests a model render</a>. 
+  If we have received all of the outfit items required for the model, the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L259">add_item_to_agent_list()</a>function sends a message to the <a href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CAgent%3E-for-Mailbox">mailbox</a>. This creates the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.AvatarObject.html">AvatarObject</a> from the skeleton and the list of <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObjects</a> stored in the global agent list. It then writes the agent object to disk, and calls <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/skinned_mesh/fn.generate_skinned_mesh.html">generate_skinned_mesh()</a>, passing in the agent object's JSON path. Once the mesh has been written to disk, a model render UI message is sent with a link to the path. 
 </div>
-
-<div class="bubble sinister">
-  <h1>Generate Model</h1>
-  Now that all of  the outfit objects have been received, the core is ready to start rendering the avatar. The skeleton's final state is <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L138">written to disk</a>, and the JSON paths for all of the SceneObjects are collected and sent to the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L159">generate skinned mesh</a> function. That is an <a href="https://github.com/benthic-mmo/metaverse_gltf/blob/06aac4d919e9ac0e53770784d3b90ba6246d2840/src/skinned_mesh.rs#L9">external function</a>found in the <a href="https://github.com/benthic-mmo/metaverse_gltf">metaverse_gltf</a> crate which generates GLTF from SceneGroup JSON paths.
-  <br>
-<br>
-More info on model generation can be found <a href="/rendering">here</a> in the docs.
-  <br>
-<br>
-  Once the model has been generated, <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/agent.rs#L165">send a message to the UI</a> with the position, path and type of the generated model. 
-
-
 </div>

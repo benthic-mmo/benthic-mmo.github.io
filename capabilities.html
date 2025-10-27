@@ -12,25 +12,32 @@ title: Capabilities
     <br />
     These capabilities are used for a large portion of server-client
     communication.
+    <hr> 
+  The flow is relatively simple.
   </p>
   <div class="bubble-row">
     <div class="bubble contrast small">
       <h3>1.</h3>
-      Send capability request to the server
+      <p>
+      Retrieve capability seed URL from <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.seed_capability">login response</a> </p>
     </div>
     <div class="bubble contrast small">
       <h3>2.</h3>
-      Retrieve capability URL
+      Send capability request LLSD-XML to the received URL
     </div>
     <div class="bubble contrast small">
       <h3>3.</h3>
-      Send and receive requests at that URL
+      Parse the response containing the capability URLs from the server
+    </div>
+    <div class="bubble contrast small">
+      <h3>4.</h3>
+      Retrieve non-spec data from the capability URL using get requests
     </div>
   </div>
   {% capture Endpoints %}
   <h2>Endpoints</h2>
   Over the years, endpoints have been created and fallen out of use. Currently,
-  most documentation lists several unused endpoints. These endpoints are used by
+  most documentation lists several unused endpoints. The endpoints listed here are used by
   the project and are known to work.
   <table>
     <tr>
@@ -56,21 +63,20 @@ title: Capabilities
   Once a session is established, capabilitities should be enabled.
   <br />
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L201"
+    href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/session.rs#L427"
     >Here</a
   >, immediately after login, the session initialization code requests
-  capabilities to be enabled based on the enabled features.
+  capabilities to be enabled based on the enabled features the viewer compiled with.
   <br />
 
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/capabilities.rs#L62"
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/struct.CapabilityRequest.html#method.new_capability_request"
   >
     new_capability_request()
   </a>
-  generates the LLSD XML that will be sent to the server to enable the listed
+  generates the LLSD-XML that will be sent to the server to enable the listed
   endpoints. The resulting XML will look like this for example.
-  <pre><code>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+  <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;llsd&gt;
   &lt;array&gt;
     &lt;string&gt;ViewerAsset&lt;/string&gt;
@@ -86,7 +92,7 @@ title: Capabilities
   </p>
   The CapabilityRequest is then sent to the
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L24"
+    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CCapabilityRequest%3E-for-Mailbox"
     >mailbox</a
   >
   to enable.
@@ -97,7 +103,7 @@ title: Capabilities
         <p>
           The
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L135"
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.seed_capability"
             >Seed Capability URL</a
           >
           is retrieved from the LoginResponse object and saved in the session.
@@ -108,7 +114,7 @@ title: Capabilities
         <p>
           The requested capabilities are
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/capabilities.rs#L62"
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/struct.CapabilityRequest.html#method.new_capability_request"
           >
             serialized into LLSD-XML</a
           >
@@ -118,9 +124,9 @@ title: Capabilities
       <div class="bubble contrast small">
         <h2>3.</h2>
         <p>
-          The capabilities are
+          The capability request LLSD-XML is
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L34"
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/capabilities.rs#L33"
             >sent to the seed capability URL</a
           >
           using a Post, with the body being the LLSD-XML content
@@ -131,16 +137,21 @@ title: Capabilities
         <p>
           The requested URLs are returned in the
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/capabilities.rs#L41"
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/struct.CapabilityRequest.html#method.response_from_llsd"
             >response</a
           >. These URLs will be used for making requests.
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>5</h2>
+        <p>
+          The resulting URLs are handled by the <a href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CSetCapabilityUrls%3E-for-Mailbox">mailbox</a> and stored in the global session, to be used later for making requests. 
         </p>
       </div>
     </div>
   </div>
   The response will look like this.
-  <pre><code>
-&lt;llsd&gt;
+  <pre><code class="language-xml">&lt;llsd&gt;
   &lt;map&gt;
     &lt;key&gt;FetchLibDescendents2&lt;/key&gt;
     &lt;string&gt;http://172.20.20.20:9000/491d7ad3-ecbf-497c-90e6-abcaba76277c&lt;/string&gt;
@@ -159,9 +170,10 @@ title: Capabilities
   <br />
   For example, this is the rquest to retrieve a folder from the inventory
   endpoint.
-  <pre><code>
-Post: http://172.20.20.20:9000/371320f6-7694-4e9c-bbb9-19e56f1e1027
+  <pre><code class="language-xml">Post: http://172.20.20.20:9000/371320f6-7694-4e9c-bbb9-19e56f1e1027
 Header: "Content-Type", "application/llsd+xml
+
+
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;llsd&gt;
   &lt;map&gt;
@@ -183,6 +195,13 @@ Header: "Content-Type", "application/llsd+xml
   &lt;/map&gt;
 &lt;/llsd&gt;
 </code></pre>
-  The Not all endpoints will return XML. Be sure to know which encoding your
-  endpoint uses.
 </div>
+
+{%capture Deserialization%}
+<h2>Endpoint Response Deserialization</h2>
+Not every endpoint will return the same data type, and the same endpoint may even return a different data type depending on what data is being requested from it. 
+<br>
+For example, the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.ViewerAsset">ViewerAsset</a> endpoint can return three different data types, if the requested object is a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/scene/struct.SceneObject.html">SceneObject</a>, an <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/item/struct.Item.html">Item</a>, or an <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/mesh/struct.Mesh.html">Mesh</a>. These docs will make an effort to point out which data type an endpoint returns, based on which input it receives. 
+{%endcapture%}
+{% include evil_benthic.html content=Deserialization %}
+

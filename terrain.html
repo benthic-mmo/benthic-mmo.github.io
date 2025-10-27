@@ -13,17 +13,16 @@ title: Terrain
     >LayerData</a
   >
   packets to the client. LayerData packets contain several patches, which are
-  described by the initial Layer body header. Be sure to read through the
+  described by the initial Layer body header. Packet parsing specifics can be found on 
   <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/environment/layer_data/index.html"
-    >docs.rs packet information</a
-  >
-  to understand how the LayerData packets are constructed.
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/environment/layer_data/index.html"
+    >docs.rs</a
+  >.
   <hr />
   Unlike most other packets, the packet parsing only parses the packet header,
   and the body header of the LayerData object. and stops when it gets to the
   body data. This is because the body parsing is very complex, and should be
-  handled asyncronously, from the environment crate.
+  handled asyncronously to avoid creating a bottleneck.
 
   <div class="center">
   <div class="bubble-row">
@@ -32,7 +31,7 @@ title: Terrain
       <p>
         The LayerData is received from the sever from the
         <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/udp_handler.rs#L93"
+          href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/udp_handler.rs#L78"
           >udp_read function</a
         >
       </p>
@@ -42,7 +41,7 @@ title: Terrain
       <p>
         The LayerData packet is parsed by the
         <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/environment/layer_data.rs#L100"
+          href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet/struct.Packet.html#method.from_bytes"
           >PacketData::from_bytes()</a
         >, determining the stride, size, and type of the contained layers.
       </p>
@@ -52,7 +51,7 @@ title: Terrain
       <p>
         The LayerData packet is received by the mailbox
         <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/environment.rs#L36?"
+          href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CLayerData%3E-for-Mailbox"
           >here</a
         >, without fully parsing the body yet.
       </p>
@@ -61,7 +60,7 @@ title: Terrain
       <h3>4.</h3>
       <p>
         <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/main/crates/environment/src/layer_handler.rs#L39"
+          href="https://docs.rs/metaverse_environment/latest/metaverse_environment/layer_handler/fn.parse_layer_data.html"
           >parse_layer_data</a
         >
         is called on the unstructured body data
@@ -71,7 +70,7 @@ title: Terrain
   </div>
   After the layer's
   <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/environment/layer_data/enum.LayerType.html"
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/environment/layer_data/enum.LayerType.html"
     >Type</a
   >
   is determined, the environment crate can begin the more complicated parsing.
@@ -126,7 +125,7 @@ title: Terrain
   Now that we have determined the type of the patch, we can begin work towards
   generating 3d models that our UI can display. The
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/environment/src/land.rs#L34"
+    href="https://docs.rs/metaverse_environment/latest/metaverse_environment/layer_handler/trait.PatchData.html#tymethod.from_packet"
     >from_packet()</a
   >
   function handles parsing the patch data from the unstructured data.
@@ -135,7 +134,7 @@ title: Terrain
   format, and are not compressed with the rest of the layer data. The header is
   parsed using the
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/environment/src/layer_handler.rs#L106"
+    href="https://docs.rs/metaverse_environment/latest/metaverse_environment/layer_handler/struct.TerrainHeader.html#method.from_bytes"
     >TerrainHeader::from_bytes()</a
   >
   function.
@@ -263,7 +262,7 @@ Bytes:     0    0    0   164  65   1    0    8   96 ...
   Now that the TerrainHeader is taken care of, the next step is to handle the
   bytes that follow it. <br />
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/environment/src/land.rs#L148"
+    href="https://docs.rs/metaverse_environment/latest/metaverse_environment/land/fn.parse_heightmap.html"
     >Parse_heightmap()</a
   >
   is called, which runs an algorithm designed by secondlife to decompress
@@ -298,7 +297,7 @@ Bytes:     0    0    0   164  65   1    0    8   96 ...
   <h1>Decompress Heightmap</h1>
   Now with the data parsed, we can
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/environment/src/layer_handler.rs#L180"
+    href="https://docs.rs/metaverse_environment/latest/metaverse_environment/layer_handler/fn.decompress_patch.html"
     >decompress the heightmap data</a
   >. The LayerData is encoded in a way that is similar to JPEG compression.
   Instead of storing data in rows, it stores it in a zig-zag pattern.
@@ -349,19 +348,16 @@ Bytes:     0    0    0   164  65   1    0    8   96 ...
   stitched by the client. This is to allow rendering two patches from different 
   servers next to each other seamlessly.
   <br>
-  In order to fill this gap, the client needs to have retreived all of the tiles in three out of six directions, so it can render one full edge of stitching.
+  In order to fill this gap, the client needs to have retreived all of the tiles to the right, to the left, and to the upper top corner between them.
   <br>
-  This is done in the core crate. When it parses a Land patch, it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/environment.rs#L47">inserts it the patch cache</a>. Unrendered land patckets are added to the patch queue and the total patch list. If the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/environment/src/land.rs#L121">North, East and Top Corner</a> exist in the total patch list, generate mesh retrieves them, and begins the stitching.
+  This is done in the core crate. When it parses a Land patch, it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/environment.rs#L41">inserts it the patch cache</a>. Unrendered land patckets are added to the patch queue and the total patch list. If the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/environment/src/land.rs#L123">North, East and Top Corner</a> exist in the total patch list, generate mesh retrieves them, and begins the stitching.
   <br>
-  <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/environment/src/generate_triangles.rs#L9">Generate_triangles()</a> follows a simple algorithm to convert the heightmap data to triangular mesh data. This is followed by the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/environment/src/generate_triangles.rs#L72">stitch_patches()</a> function, which adds the geometry between the patches. 
+  <a href="https://docs.rs/metaverse_environment/latest/metaverse_environment/generate_triangles/fn.generate_mesh_with_indices.html">Generate_mesh_with_indices()</a> follows a simple algorithm to convert the heightmap data into a mesh with corresponding indices. Once the mesh has been created, <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/environment/src/generate_triangles.rs#L100">stitch_patches_with_indices()</a> is called, which adds the geometry between the gaps in the patches. 
 </div>
 
 <div class="bubble">
   <h1>Generate Mesh</h1>
-  With the stitching added, the core has now converted the compressed layerdata to a fully renderable array of triangles. 
+  With the stitching added, the core has now converted the compressed layerdata into data that can be rendered by the <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/">metaverse_mesh</a> crate. A <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObject</a> is created from the data by the <a href="https://docs.rs/metaverse_environment/latest/metaverse_environment/generate_triangles/fn.generate_mesh_with_indices.html">generate_mesh_with_indices()</a> function, which is sent directly to the <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/gltf/fn.generate_mesh.html">generate_mesh()</a> function in the <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/index.html">metaverse_mesh</a> crate. No intermediate JSON is written for environment objects, since they should be drawn immediately.
   <br>
-  <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/environment/src/generate_gltf.rs#L9">
-    generate_land_gltf()
-  </a> puts the triangle buffer into a valid GLTF format, and the core sends a message to the UI to render it.
 </div
 

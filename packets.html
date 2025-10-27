@@ -6,8 +6,9 @@ title: Packets
 <div class="bubble">
   <h1>UDP Packet handling</h1>
   Once the session is established after a login, the server will being sending
-  messages to the Core over UDP. These are handled by the server to client
-  process that we started in the <a href="/login#4">previous chapter</a>.
+  messages to the Core over UDP. These packets are received using the process
+  that we started when establishing the
+  <a href="/login#4">session</a> after a successful login.
   <hr />
   <div class="center">
     <div class="bubble-column" style="max-width: 700px">
@@ -16,9 +17,9 @@ title: Packets
         <p>
           Raw UDP packets enter the Core from
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/udp_handler.rs#L27"
+            href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#method.start_udp_read"
           >
-            here </a
+            start_udp_read()</a
           >. It continuously receives messages from the server as they come into
           the socket.
         </p>
@@ -28,7 +29,7 @@ title: Packets
         <p>
           The raw data is then converted to a
           <a
-            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet/index.html"
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet/struct.Packet.html"
             >Packet</a
           >
           object using the packet's
@@ -44,7 +45,7 @@ title: Packets
         <p>
           The packet's from_bytes functon
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/packet/packet.rs#L36"
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/messages/src/packet/packet.rs#L36"
             >then</a
           >
           tries to parse the
@@ -61,7 +62,7 @@ title: Packets
           Handle edgecases like if the packet has no body, or if the packet
           header tells you the packet body is
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/packet/packet.rs#L78"
+            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/messages/src/packet/packet.rs#L64"
             >zerocoded</a
           >.
         </p>
@@ -81,7 +82,7 @@ title: Packets
           >
           of the packet. Using the
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/packet/packet_types.rs#L126"
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet_types/enum.PacketType.html#method.from_id"
             >from_id()</a
           >
           function, the packet's body is parsed and returned.
@@ -96,29 +97,18 @@ title: Packets
   Some packets have a "reliable" flag. This means that on receive, the client
   needs to respond with an
   <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/core/packet_ack/index.html"
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/packet_ack/index.html"
     >ack packet</a
   >, or else the server will continue sending it.
   <br />
-  When a reliable packet is received, the core will immediately add the packet's
-  sequence number to the packet ID that needs to be acked, and then queue a
-  PacketAck packet. This will be handled
+  When a reliable packet is received, the core will immediately
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/udp_handler.rs#L51"
-    >here</a
-  >.
-
-  <hr />
-  The client can also send reliable packets to the server, which gets a little
-  more tricky. The client
-  <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L337"
-    >creates a future</a
-  >, which it then converts into an actor.
-  <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core/session.rs#L370"
-    >send_ack</a
+    href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/udp_handler.rs#L34"
+    >add the packet's sequence number</a
   >
-  runs in the background, waiting until either the maximum number of attempts
-  have run out, or the client receives the ack it's waiting for on its UDP port.
+  to the ack list. The mailbox is then triggered to
+  <a
+    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CSendAckList%3E-for-Mailbox"
+    >send the list</a
+  >.
 </div>
