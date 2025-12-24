@@ -181,8 +181,7 @@ title: Core
     >
     in the same way. This allows the decoding to be a straightforward operation
     of parsing JSON bytes, which can be done easily in any language with
-    existing libraries, allowing any UI framework to implement the main rust
-    core.
+    existing libraries, allowing any UI framework to use the main rust core.
   </p>
 
   <div class="bubble good wavy">
@@ -260,13 +259,9 @@ title: Core
             >Core retrieves an event</a
           >
         </h3>
-        Some messages from the server should be displayed right away by the UI.
-        This is true of the ChatFromSimulator object, which is
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/udp_handler.rs#L86"
-          >converted</a
-        >
-        to a UIMessage, and then sent to the mailbox for handling.
+        Messages are retrieved from the server by the core. Those messages are
+        handled as actix actors for processing. If the UI should be informed of
+        a change, that message is sent.
       </div>
       <div class="bubble contrast">
         <h3>
@@ -276,8 +271,7 @@ title: Core
             Mailbox send to UI</a
           >
         </h3>
-        The mailbox sends all UIMessages it receives to the UI using the UDP
-        socket
+        The mailbox sends UIMessages to the UI using the UDP socket
       </div>
       <div class="bubble contrast">
         <h3>
@@ -287,7 +281,7 @@ title: Core
             Parse bytes as UIMessage
           </a>
         </h3>
-        The UI handles the bytes, and add it to the Sender. This is a crossbeam
+        The UI handles the bytes, and adds it to the Sender. This is a crossbeam
         channel, which creates the message queue for the UI to go through.
         Crossbeam must be used, since this is an asyncronous program interfacing
         with a syncronous UI framework.
@@ -307,7 +301,7 @@ title: Core
         >
         to run every tick of the UI. This means that once a frame, the message
         queue is checked, and any pending messages sent from the core are
-        processed. In this example, this is a
+        processed. In this example, a
         <a
           href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/ui/src/plugin.rs#L292"
           >ChatFromSimulator</a

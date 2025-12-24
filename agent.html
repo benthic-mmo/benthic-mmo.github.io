@@ -13,7 +13,6 @@ title: Agent
     <p>
       Implementing agents requires using the
       <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.FetchInventoryDescendents2">FetchInventoryDescendents2</a>,
-      <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.FetchLibDescendents2">FetchLibDescendents2</a>, and
       <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.ViewerAsset">ViewerAsset</a>
       endpoints, along with the
       <a href="/inventory">inventory crate</a> enabled. If you are unfamiliar
@@ -34,7 +33,7 @@ title: Agent
           <a
             href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L41"
             >Avatar </a
-          >. Agent data is handled through the
+          >. The user's agent data is handled through the
           <a href="/inventory">Inventory</a> system, and must be retreived
           through a <a href="/capabilities">capability endpoint</a>.
         </p>

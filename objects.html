@@ -4,86 +4,83 @@ title: About
 ---
 
 <div class="bubble">
-  <h1>Object Updates</h1>
-  After authentication,
+  <h1>Object Packets</h1>
+  After sending the
   <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/index.html"
-    >ObjectUpdate</a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake_response/"
+    >RegionHandshakeResponse</a
   >
-  packets will start streaming in from the server, representing other player
-  avatars, furniture, environment data, etc.
-  <br />
-  <br />
-  This is handled by the server's "interest list", which is a list of all objects in view of the user, as determined by the metaverse server.
-  <br />
-  <br />
-  This is one of the largest packets sent by the server.
-
-  <hr />
-  <br />
-  Not all of the ObjectUpdate fields will be used by every object. There are
-  several unused fields in the packet such as
+  packet,
   <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/struct.ObjectUpdate.html#structfield.joint_type"
-    >joint type</a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/object_update"
+    >ObjectUpdate</a
+  >,
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/object_update_compressed"
+    >ObjectUpdateCompressed</a
+  >,
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/object_update_cached"
+    >ObjectUpdateCached</a
   >
   and
   <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/struct.ObjectUpdate.html#structfield.primitive_geometry"
-    >primitive_geometry</a
-  >. Some of the most useful elements of the ObjectUpdate packet are
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/improved_terse_object_update"
+    >ImprovedTerseObjectUpdate</a
+  >
+  packets will start streaming in from the server, representing a few different
+  methods of spawning objects in the scene, or updating their state.
+  <br />
+  <br />
+  Object Update packets are used for almost everything when it comes to building
+  the scene. They are used to inform the viewer of an avatar's presence, their
+  attachments, and the scene's spawned objects.
+</div>
+<div class="bubble">
+  <h1>Object Update</h1>
+  This is one of the first object updating packets the viewer will receive.
+  Before the agent is a root agent, ObjectUpdate packets will be sent,
+  containing avatar data, and avatar attachment data.
+  <br />
+  <br />
+  Though the parsing of most of the packet is relatively simple, lots of
+  relevant information is hidden in non-obvious places throughout the packet.
+
   <div class="bubble-row">
     <div class="bubble contrast">
       <a
-        href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/struct.ObjectUpdate.html#structfield.full_id"
+        href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/struct.ObjectUpdate.html#structfield.extra_params"
       >
-        <h2>full_id</h2>
+        <h2>extra_params</h2>
       </a>
-      The full UUID of the object. Can be used to retrieve the full mesh from
+      contains information about sculpts, flex data, materials, and more. Each
+      type has a different decoding structure. Extra params of type sculpt can
+      contain mesh data, and store the asset_ID for retrieving a full mesh from
       the ViewerAsset endpoint.
     </div>
 
     <div class="bubble contrast">
       <a
-        href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/struct.ObjectUpdate.html#structfield.pcode"
+        href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/struct.ObjectUpdate.html#structfield.name_value"
       >
-        <h2>pcode</h2>
+        <h2>name_value</h2>
       </a>
       <p>
-        This u8 number stores the object's
-        <a
-          href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/object_types/enum.ObjectType.html"
-          >type.</a
-        >
-      </p>
-    </div>
-
-    <div class="bubble contrast">
-      <a
-        href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/struct.ObjectUpdate.html#structfield.data"
-        ><h2>data</h2></a
-      >
-      <p>
-        the data can store an object's xy location and the velocity,
-        acceleration, rotation, and angular velocity. These updates can be high,
-        medium, and low precision updates, with foot collision planes and
-        without. This is stored in the
-        <a
-          href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/struct.MotionData.html#structfield.foot_collision_plane"
-          >MotionData</a
-        >
-        object.
+        A string representation of certain object relevant information. For
+        objects of type Avatar, this contains the avatar's name. For objects of
+        type Prim, this can include a string representation of the object's
+        attachment data.
       </p>
     </div>
   </div>
   {% capture update %}
   <h2>Parsing Object Update</h2>
-  Though the majority of the ObjectUpdate struct is straightforward, the MotionData
-  portion of it can be difficult to parse correctly.
+  Though the majority of the ObjectUpdate struct is straightforward, the
+  MotionData portion of it can be difficult to parse correctly.
   <br />
   The type of update is determined by the length of the data field.
   <br />
-  <br>
+  <br />
   <div class="bubble-row">
     <div class="bubble tertiary">
       <h2>High</h2>
@@ -133,40 +130,75 @@ title: About
   {% endcapture %} {% include evil_benthic.html content=update %}
 </div>
 <div class="bubble">
-  <h1>Handling</h1>
-  <div class="bubble-row">
-    <div class="bubble contrast small">
-      <h2>1.</h3>
-      <p>
-        The ObjectUpdate is
-        <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/udp_handler.rs#L72"
-          >received</a
-        >
-        from the UDP socket
-      </p>
-    </div>
-    <div class="bubble contrast small">
-      <h2>2.</h3>
-      <p>
-        ObjectUpdate is
-        <a
-          href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/object_update/struct.ObjectUpdate.html#method.from_bytes"
-          >parsed from bytes</a
-        >
-      </p>
-    </div>
-    <div class="bubble contrast small">
-      <h2>2.</h2>
-      <p>
-        The
-        <a
-          href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CObjectUpdate%3E-for-Mailbox"
-          >mailbox</a
-        >
-        determines the type of the object, and passes it along to its
-        appropriate handler (Tree, <a href="/agent">Avatar</a>, Grass, etc...)
-      </p>
-    </div>
-  </div>
+  <h1>ObjectUpdateCached</h1>
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/object_update_cached"
+    >ObjectUpdateCached</a
+  >
+  packets begin coming in after the
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake_response/"
+    >RegionHandshakeResponse</a
+  >
+  packet is sent. This is a very simple packet that contains only a list of the
+  scene-local IDs, and a CRC for visible objects in the scene, to inform the
+  viewer to check its cache for the objects specified.
+  <br />
+  <br />
+  If those objects aren't present, the viewer is expected to sen a
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/request_multiple_objects"
+    >RequestMultipleObjects</a
+  >
+  packet, and expect to receive
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/object_update_compressed"
+    >ObjectUpdateCompressed</a
+  >
+  packets in return.
+</div>
+<div class="bubble">
+  <h1>ObjectUpdateCompressed</h1>
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/object_update_compressed"
+    >ObjectUpdateCompressed</a
+  >
+  packets begin coming in after the
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake_response/"
+    >RegionHandshakeResponse</a
+  >
+  packet is sent. It is also sent in response to a
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/request_multiple_objects"
+    >RequestMultipleObjects</a
+  >
+  packet, giving full object information for the requested objects. This is
+  similar to an
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/object_update"
+    >ObjectUpdate</a
+  >
+  packet, having many similar fields in its data block. This includes its
+  special handling of the extra_params block, and the name_value block. However,
+  this contains several objects instead of a single one, many of its fields are
+  optional, and are out of order when compared to an
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/object_update"
+    >ObjectUpdate</a
+  >, packet.
+</div>
+<div class="bubble">
+  <h1>ImprovedTerseObjectUpdate</h1>
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/improved_terse_object_update"
+    >ImprovedTerseObjectUpdate</a
+  >
+  These packets are received mainly when something in the scene has changed
+  position, velocity, or some other movement property. These are short packets
+  which give mostly the fields found in the MotionData field in the
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/object/object_update"
+    >ObjectUpdate</a
+  >, packet.
 </div>

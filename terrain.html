@@ -9,7 +9,7 @@ title: Terrain
   <h1>Terrain</h1>
   After completing login, the server will begin sending
   <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/environment/layer_data/index.html"
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/environment/layer_data/index.html"
     >LayerData</a
   >
   packets to the client. LayerData packets contain several patches, which are
@@ -343,7 +343,7 @@ Bytes:     0    0    0   164  65   1    0    8   96 ...
 </div>
 
 <div class="bubble sinister">
-  <h1>Generate Mesh and Stitch Patches</h1>
+  <h1>Stitch Patches</h1>
   When patches are retrieved, there is a gap between them that has to be manually 
   stitched by the client. This is to allow rendering two patches from different 
   servers next to each other seamlessly.
@@ -352,12 +352,11 @@ Bytes:     0    0    0   164  65   1    0    8   96 ...
   <br>
   This is done in the core crate. When it parses a Land patch, it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/environment.rs#L41">inserts it the patch cache</a>. Unrendered land patckets are added to the patch queue and the total patch list. If the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/environment/src/land.rs#L123">North, East and Top Corner</a> exist in the total patch list, generate mesh retrieves them, and begins the stitching.
   <br>
-  <a href="https://docs.rs/metaverse_environment/latest/metaverse_environment/generate_triangles/fn.generate_mesh_with_indices.html">Generate_mesh_with_indices()</a> follows a simple algorithm to convert the heightmap data into a mesh with corresponding indices. Once the mesh has been created, <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/environment/src/generate_triangles.rs#L100">stitch_patches_with_indices()</a> is called, which adds the geometry between the gaps in the patches. 
-</div>
+  <a href="https://docs.rs/metaverse_environment/latest/metaverse_environment/generate_triangles/fn.generate_mesh_with_indices.html">Generate_mesh_with_indices()</a> follows a simple algorithm to convert the heightmap data into vertices with corresponding indices. Once the mesh has been created, <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/environment/src/generate_triangles.rs#L100">stitch_patches_with_indices()</a> is called, which adds the geometry between the gaps in the patches. 
 
-<div class="bubble">
-  <h1>Generate Mesh</h1>
-  With the stitching added, the core has now converted the compressed layerdata into data that can be rendered by the <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/">metaverse_mesh</a> crate. A <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObject</a> is created from the data by the <a href="https://docs.rs/metaverse_environment/latest/metaverse_environment/generate_triangles/fn.generate_mesh_with_indices.html">generate_mesh_with_indices()</a> function, which is sent directly to the <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/gltf/fn.generate_mesh.html">generate_mesh()</a> function in the <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/index.html">metaverse_mesh</a> crate. No intermediate JSON is written for environment objects, since they should be drawn immediately.
   <br>
-</div
+  <br>
+  this is then sent to the UI as raw JSON vertices, allowing the UI to apply its own shaders to the land.
+
+</div>
 

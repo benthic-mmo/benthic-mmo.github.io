@@ -125,16 +125,7 @@ title: Inventory
   different endpoint, and are saved to the session under the Folder object.
   <hr />
   At this point, the inventory's directory structure is populated, and contains
-  the user's inventory objects. The folders in memory are stored as
-  <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/folder_types/struct.FolderNode.html"
-    >FolderNodes</a
-  >. The item metadata is stored in the
-  <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/folder_types/struct.Folder.html"
-    >Folder</a
-  >
-  object.
+  the user's inventory objects. The folders are stored on-disk in a sqlite DB, which can be searched quickly without having to waste RAM on the folder structure.  
 </div>
 
 <div class="bubble">

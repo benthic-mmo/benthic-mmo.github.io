@@ -26,9 +26,7 @@ title: Main
     like handshake flows, rendering pipeline logic, and the assumptions existing metaverse servers make will be
     explained in high-level here, along with links to the rust crate docs containing specific implementation
     information.</p>
-</div>
-
-<div class="bubbl wavy good" style="padding-top:60px;">
+<div class="bubble wavy good" style="padding-top:60px;">
   <div class="bubble-row">
     <div class="bubble">
       <h2>Async</h2>
@@ -37,7 +35,7 @@ title: Main
 
     <div class="bubble">
       <h2>Open Standards</h2>
-      <p>This project aims to be fully compatable with all existing open metaverse standards, while working to
+      <p>This project aims to be fully compatable with existing open metaverse standards, while working to
         streamline
         the adoption of more modern ones.</p>
     </div>
@@ -49,8 +47,63 @@ title: Main
 
     <div class="bubble">
       <h2>Modular</h2>
-      <p>Using rust's feature capabilties, you can compile only the parts of the project you need. Building a metaverse
-        chat app? You can use only the parts of the library that you need.</p>
+      <p>Using rust's feature capabilties, you can compile only the parts of the project you need.</p>
+    </div>
+  </div>
+</div>
+  <h1>Project Goals</h1>
+<div class="center">
+    <div class="bubble-column" style="max-width: 1000px">
+      <div class="bubble contrast small">
+        <h2>Documentaton</h2>
+        <p>
+          This project aims to be fully documented, and developer friendly. These docs, along with the rust crate's docs 
+          should be able to function as a complete spec for the protocol, enabling other projects to implement 
+          open metaverse functionality into their own projects.
+          <br>
+          <br>
+          If given a choice between implicit functionality and verbosity, always favor verbosity. 
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>Modularity</h2>
+        <p>
+          Each part of this project should be useful on its own to other projects. Viwer core, UI, server, mesh generation,
+          and message handling should all exist entirely seperately from each other. External-facing parts of the project
+          should use language-agnostic interfaces, like JSON or UDP packets.
+          <br>
+          <br>
+          If given a choice between monolithic and modular, always choose modular.
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>Community</h2>
+        <p>
+          People write code for other people. The community surrounding this project aims to be 
+          deliberate, welcoming, and curious. 
+          <br>
+          <br>
+          If given a choice between welcoming new contributors and developer efficiency, always choose the new contributors. 
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>Standardization</h2>
+        <p>
+          Whenever possible, this project should prioritize well-documented and standardized tools and frameworks. 
+          <br>
+          <br>
+          If given the choice between purpose-built and common standards, always choose common standards. 
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>Testability</h2>
+        <p>
+          All code should prioritize being written in a way that is machine-testable, both through unit testing and end to end testing.
+          <br>
+          <br>
+          If given the choice between testable code and efficient code, prioritize testability. 
+        </p>
+      </div>
     </div>
   </div>
 </div>
