@@ -262,6 +262,65 @@ let login_data = Login {
   <hr>
   This is sent to the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L163">mailbox</a>, which handles it as an outgoing packet and <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/session.rs#L297">sends</a> it to the server via UDP using the URL and socket that were retrieved from the LoginResponse.
 </div>
+<div class="bubble contrast">
+  <h1 id="5">RegionHandshake</h1>
+  In response to the circuit code packet, a <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake">Region Handshake</a> packet is sent from the server. If this packet is not received, this means the circuitcode was not accepted, or this packet was parsed incorrectly. Check <a href="packets">the headers</a> documentation to ensure that you have handled this packet's zerocoded header.
+  <br><br>
+  As of right now your avatar is in the child agent state. 
+  <div class="bubble-row">
+    <div class="bubble good">
+      <h2>Child Agent</h2>
+      <ul>
+        <li>
+          Can receive objectupdate packets for some attachments
+        </li>
+        <li>
+          Can receive layerdata for environment
+        </li>
+        <li>
+          Can send and receive chat messages 
+        </li>
+        <li>
+          Avatar can be seen as present in-world by other players
+        </li>
+      </ul>
+      <hr>
+      <ul>
+        <li>
+          Cannot receive full object data from the environment
+        </li>
+        <li>
+          Cannot move around in the scene 
+        </li>
+        <li>
+          Is not considered by the server to be fully present.
+        </li>
+      </ul>
+    </div>
+   <div class="bubble good">
+      <h2>Root Agent</h2>
+      <ul>
+        <li>
+          Considered fully logged in by the server 
+        </li>
+        <li>
+          Receives full ObjectUpdate packets 
+        </li>
+        <li>
+          Can move around in-world
+        </li>
+      </ul>
+    </div> 
+  </div>
+  After receiving this packet, it must be replied to with a 
+  <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake_response/">RegionHandshakeResponse</a> packet. 
+</div>
+<div class="bubble sinister">
+  <h1 id="5">RegionHandshakeResponse</h1>
+  After receiving the <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake">Region Handshake</a> packet, the viewer must reply with the    <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake_response/">RegionHandshakeResponse</a> packet. This will promote the agent from a child to a root agent, allowing for full ObjectUpdate packets to be received, and the player to move around. 
+</div>
 <div class="bubble sinister">
   <h1 id="6">Establish Ping</h1>
   <p>

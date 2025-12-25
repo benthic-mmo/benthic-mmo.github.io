@@ -67,29 +67,196 @@ title: Packets
           >.
         </p>
       </div>
-      <div class="bubble contrast small">
-        <h1>5.</h1>
-        <p>
-          The combination of the header's
-          <a
-            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/header/enum.PacketFrequency.html"
-            >frequency</a
-          >
-          and ID determine the
-          <a
-            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet_types/enum.PacketType.html"
-            >Type</a
-          >
-          of the packet. Using the
-          <a
-            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet_types/enum.PacketType.html#method.from_id"
-            >from_id()</a
-          >
-          function, the packet's body is parsed and returned.
-        </p>
-      </div>
     </div>
   </div>
+</div>
+
+<div class="sinister bubble">
+  <h1>Headers</h1>
+  Header parsing in the open metaverse protocol can be challenging. Headers can
+  be a variable number of bytes long, depending on previous values read from the
+  stream. <br /><br />
+  The layout is as follows:
+
+  <table>
+    <tr>
+      <td>Flags</td>
+      <td>1 byte</td>
+      <td>
+        Flag values are set with a bitwise and. The last four bytes are unused.
+        <table>
+          <tr>
+            <td>Zerocoded</td>
+            <td>0x80</td>
+          </tr>
+          <tr>
+            <td>Reliable</td>
+            <td>0x40</td>
+          </tr>
+          <tr>
+            <td>Resent</td>
+            <td>0x20</td>
+          </tr>
+          <tr>
+            <td>Ack</td>
+            <td>0x10</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>Sequence Number</td>
+      <td>4 bytes</td>
+      <td>
+        The sequence number of this packet. This is used to handle
+        acknowledgment packets.
+      </td>
+    </tr>
+    <tr>
+      <td>Extra</td>
+      <td>1 byte</td>
+      <td>How many bytes are used to describe the packet ID and frequency.</td>
+    </tr>
+    <tr>
+      <td>Packet ID and frequency</td>
+      <td>1, 2, or 4 bytes</td>
+      <td>The combined ID and frequency of the packet</td>
+    </tr>
+  </table>
+
+  The Packet ID and frequency is handled differently depending on if it is a
+  high, medium, low, or fixed frequency packet, based on the location of a 0xFF
+  byte.
+
+  <table>
+    <tr>
+      <td>High</td>
+      <td>
+        The following byte after Extra is not 0xFF. That byte is the packet's
+        ID.
+      </td>
+      <td>
+        <table>
+          <tr>
+            <td>Extra Byte</td>
+            <td>Packet ID</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>Medium</td>
+      <td>
+        If the following byte after Extra is 0xFF, the following byte is the
+        packet's ID
+      </td>
+      <td>
+        <table>
+          <tr>
+            <td>Extra Byte</td>
+            <td>0xFF</td>
+            <td>Packet ID</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>Low</td>
+      <td>
+        If the following two bytes after Extra is 0xFF, the following byte is
+        the packet's ID. Low packets are stored in two bytes instead of one.
+      </td>
+      <td>
+        <table>
+          <tr>
+            <td>Extra Byte</td>
+            <td>0xFF</td>
+            <td>0xFF</td>
+            <td>Packet ID low byte</td>
+            <td>Packet ID high byte</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>Fixed</td>
+      <td>
+        If the following three bytes after Extra is 0xFF, the following byte is
+        the packet's ID
+      </td>
+      <td>
+        <table>
+          <tr>
+            <td>Extra Byte</td>
+            <td>0xFF</td>
+            <td>0xFF</td>
+            <td>0xFF</td>
+            <td>Packet ID</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+  {% capture zerocoded %}
+  <h2>Zerocoded Headers</h2>
+  A specific bug can appear only in the headers of certain zerocoded packets of
+  low frequency, which offsets reading the bytes and creates incorrect packet
+  IDs.
+  <br />
+  <br />
+  The zerocoding algorithm runs on the entire packet when leaving the server,
+  sometimes zerocoding the header itself. What you might attempt to decode as
+  <table>
+    <tr>
+      <td>Extra Byte</td>
+      <td>0xFF</td>
+      <td>0xFF</td>
+      <td>Packet ID low byte</td>
+      <td>Packet ID high byte</td>
+    </tr>
+  </table>
+  is in reality
+  <table>
+    <tr>
+      <td>Extra Byte</td>
+      <td>0xFF</td>
+      <td>0xFF</td>
+      <td>0x00</td>
+      <td>0x01</td>
+      <td>Packet ID high byte</td>
+    </tr>
+  </table>
+  That
+  <table>
+    <tr>
+      <td>0x00</td>
+      <td>0x01</td>
+    </tr>
+  </table>
+  is actually a single zero in the u16's low byte, followed by the u16's high
+  byte. Failing to account for this will result in the entire body of this
+  packet to be improperly decoded, and the ID of the packet to parse as 1 for
+  any zerocoded packet of low frequency with a 0 in the low byte, such as
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake"
+    >RegionHandshake</a
+  >
+
+  packets.
+  <br />
+  <br />
+  For these packets, this can be easily avoided by handling parsing like this:
+  <table>
+    <tr>
+      <td>Extra Byte</td>
+      <td>0xFF</td>
+      <td>0xFF</td>
+      <td>Packet ID low byte</td>
+      <td>0x01 (ignored)</td>
+      <td>Packet ID high byte</td>
+    </tr>
+  </table>
+  {% endcapture %} {% include evil_benthic.html content=zerocoded %}
 </div>
 
 <div class="bubble">
@@ -111,4 +278,19 @@ title: Packets
     href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CSendAckList%3E-for-Mailbox"
     >send the list</a
   >.
+</div>
+
+<div class="bubble">
+  <h1>Packet Body</h1>
+  The following bytes after the header are the data block containing the packet
+  body. Some packets contain no body, and are only sent to inform the viewer of
+  simple events, such as the
+  <a
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/disable_simulator"
+    >Disable Simulator</a
+  >
+  packet. <br /><br />
+  Packet bodies are parsed based on the combination of the frequency and ID to
+  determine the packet type. Each packet body has its own parsing rules and
+  strucs.
 </div>
