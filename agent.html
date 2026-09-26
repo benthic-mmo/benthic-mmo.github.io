@@ -31,11 +31,9 @@ title: Agent
         <p>
           The type of the ObjectUpdate is determined to be
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L41"
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/object_types/enum.ObjectType.html#variant.Avatar"
             >Avatar </a
-          >. The user's agent data is handled through the
-          <a href="/inventory">Inventory</a> system, and must be retreived
-          through a <a href="/capabilities">capability endpoint</a>.
+          >, sending a new <a href="https://docs.rs/metaverse_core/latest/metaverse_core/avatar/struct.HandleNewAvatar.html">HandleNewAvatar</a> message.
         </p>
       </div>
       <div class="bubble contrast small">
@@ -43,9 +41,9 @@ title: Agent
         <p>
           If the session's
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L45"
+            href="https://docs.rs/metaverse_avatar/latest/src/metaverse_avatar/avatar_object_handler.rs.html#37"
           >
-            agent ID is equal to the message's ID </a
+            agent ID is equal to the incoming avatar object's ID </a
           >, then the objectUpdate is requesting to render the current user's
           model.
         </p>
@@ -53,12 +51,12 @@ title: Agent
       <div class="bubble contrast small">
         <h2>3.</h2>
         <p>
-          Check if the user's inventory has loaded its
+          Check if the user's inventory 
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L46"
-            >CurrentOutfit</a
+            href="https://docs.rs/metaverse_core/latest/src/metaverse_core/avatar.rs.html#241"
+            >has loaded yet</a
           >
-          yet. This is done using the <a href="/inventory">inventory</a>, which
+          . This is done using the <a href="/inventory">inventory</a>, which
           should have begun downloading folders and metadata immediately after
           login. If it is not loaded yet, requeue the request and try again
           later.
@@ -69,34 +67,37 @@ title: Agent
         <p>
           Add the requested user ID to the
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L56"
+            href="https://docs.rs/metaverse_avatar/latest/src/metaverse_avatar/avatar_object_handler.rs.html#38"
             >agent_list</a
           >, the session-global list of all agents. This will contain its ID,
           position, and the number of items in the current outfit.
         </p>
       </div>
       <div class="bubble contrast small">
-        <h2>5.</h2>
+        <h2>6.</h2>
         <p>
-          <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/objects.rs#L72"
-            >Download</a
-          >
-          all of the assets from the inventory's CurrentOutfit folder. This
-          currently contains just the item metadata. The metadata will be used
-          to make a request to the ViewerAsset capability, which contains the
-          full mesh and skin data from the server.
+          Determine the user's <a href="https://docs.rs/metaverse_cache/latest/metaverse_cache/avatar/fn.cache_current_outfit.html">current outfit</a>, and immediately cache it if there is no current outfit version or avatar version stored in the sqlite cache.
         </p>
       </div>
+      <div class="bubble contrast small">
+        <h2>7.</h2>
+        <p>
+          Send a <a href="https://docs.rs/metaverse_core/latest/metaverse_core/avatar/struct.SetOutfitSize.html">Set Outfit Size</a> message, to tell the core when to finalize the avatar. 
+        </p>
+      </div>
+
     </div>
   </div>
 </div>
+
+
 <div class="bubble">
   <h1>Fetch assets from ViewerAsset endpoint</h1>
-  Downloading agent assets is handled by the mailbox using a
-  <a
-    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CDownloadAgentAsset%3E-for-Mailbox"
-    >DownloadAgentAsset</a> message. Each object in the outfit is sent individually to the mailbox for handling, which allows actix to schedule each download asyncronously, preventing bottlenecks.
+        <p>
+          If the avatar's gltf is already cached, <a href="https://docs.rs/metaverse_core/latest/src/metaverse_core/avatar.rs.html#194">load it directly</a>. If not, for each item in the outfit, send a <a href="https://docs.rs/metaverse_core/latest/metaverse_core/avatar/struct.DownloadAgentAsset.html">DownloadAgentAsset</a> message, or an <a href="https://docs.rs/metaverse_core/latest/metaverse_core/avatar/struct.AddObjectToAvatar.html">AddObjectToAvatar</a> message directly. 
+        </p>
+
+  Each DownloadAgentAsset message for each item in the outfit is sent individually to the mailbox for handling, which allows actix to schedule each download asyncronously, preventing bottlenecks.
   <br>
   <br>
   The ViewerAsset endpoint expects requests in the format of
@@ -107,22 +108,12 @@ title: Agent
   <pre>
     <code>http://da4b15ea-1d97-4140-afe3-2dd1ce5560710000?bodypart_id=da4b15ea-1d97-4140-afe3-2dd1ce5560710000</code></pre>
     If the agent asset is an Object,
-    <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L61"
-      >Download it</a
-    >
-    from the ViewerAsset capability endpoint. This will return an LLSD-XML
-    encoded SceneGroup, which will be
-    <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/http_handler.rs#L83"
-      >parsed</a
-    >
-    into a usable SceneGroup object for further operations.
+   <a href="https://docs.rs/metaverse_objects/latest/metaverse_objects/avatar_asset/fn.download_asset_objects.html">download it </a> from the viewer's capability endpoint. This will return <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/scene/struct.SceneObject.html">SceneObject</a> data, which will be parsed and cached.
     <br />
     <br />
     If the object is a Link,
     <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L98"
+      href="https://docs.rs/metaverse_core/latest/src/metaverse_core/avatar.rs.html#219"
       >download it
     </a>
     and add it directly to the agent list as an Item.
@@ -273,9 +264,9 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
   <h1>Download Mesh</h1>
   <p>
     Each SceneGroup can contain one or several parts, which each contain their
-    own mesh. Each mesh needs to be
+    own mesh. Each mesh within a SceneGroup must be
     <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/http_handler.rs#L96"
+      href="https://docs.rs/metaverse_objects/latest/src/metaverse_objects/http_handler.rs.html#124"
       >downloaded individually</a
     >.
   </p>
@@ -283,7 +274,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
     <h2>Apply Bind Shape Matrix</h2>
     Download each scene's
     <a
-      href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/http_handler.rs#L60"
+      href="https://docs.rs/metaverse_objects/latest/src/metaverse_objects/http_handler.rs.html#69"
     >
       mesh
     </a>
@@ -294,7 +285,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
     >
     the skin
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/mesh/struct.Skin.html#structfield.bind_shape_matrix"
+      href="https://docs.rs/metaverse_objects/latest/src/metaverse_objects/object_handler.rs.html#147"
       >bind shape matrix</a
     >
     to the vertices retreived from the server. If the bind shape matrix is not
@@ -351,7 +342,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
   <br>
   <br>
 
-  The default global skeleton is stored in <a href="https://github.com/benthic-mmo/metaverse_client/blob/main/crates/agent/src/benthic_default_model/skeleton.gltf">skeleton.gltf</a>. This can be opened in blender by importing the file as GLTF to view the bones. 
+  The default global skeleton is stored in the Default Assets repo as <a href="https://github.com/benthic-mmo/benthic_default_assets/tree/main/Skeleton">skeleton.gltf</a>. This can be opened in blender by importing the file as GLTF to view the bones. 
   <div class="center">
   <div class="bubble image" style="max-width: 400px">
           <img
@@ -362,7 +353,7 @@ Map({ skin: Map({ size: Integer(598), offset: Integer(0) }),
     </div>
   <br>
   <br>
-  This skeleton is made useable by the <a href="https://github.com/benthic-mmo/metaverse_client/blob/main/crates/agent/build.rs">build.rs</a> build script that is run at compile time. This generates a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Skeleton.html">Skeleton</a> object, which can be placed <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/agent/src/skeleton.rs#L34">in code</a> as a fully defined skeleton with the default transforms.
+  This skeleton is made useable by the default asset converter's <a href="https://docs.rs/crate/benthic_default_asset_converter/latest/source/build.rs">build.rs</a> build script that is run at compile time. This generates a <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/skeleton/struct.Skeleton.html">Skeleton</a> object, which can be used as a <a href="https://docs.rs/benthic_default_asset_converter/latest/benthic_default_asset_converter/generated/static.DEFAULT_SKELETON.html">static</a> representation of the default skeleton.
 
   <br>
   {% capture Skele %}
@@ -413,20 +404,30 @@ Mat4 { x_axis: Vec4(1.0, 0.0, 0.0, 0.0),
           />
         </div>
         <div class="bubble good">
-          <h3>Default Rotations * Server Transform</h3>
+          <h3>Compose default rotation with inverse bind translation</h3>
+        In order to correctly combine the server's IBMs with the default skeleton's rotations, you need to compose the rotation with the translations. <br><br> 
+        You don't want to multiply, or add the matrices, what you want to is create a mtrix that combines the two operations of rotation and translation, by translating the rotation matrix.
   <pre><code class="language-rust">Example:
-  Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
-         y_axis: Vec4(-0.8080318, -1.2663957e-5, -0.58910865, 0.0),
-         z_axis: Vec4(-0.5891205, 4.293412e-6, 0.8080454, -0.0),
-         w_axis: Vec4(0.0, 0.0, 0.0, 1.0) }</code></pre>
-        The default rotation needs to have its w axis zeroed out in order for it to not alter the server's translation IBM when multiplying. This contains the correct rotation information. 
-        <div class="small" style="color: #ffcc55; font-size: 4rem">x</div>
+Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
+       y_axis: Vec4(-0.8080318, -1.2663957e-5, -0.58910865, 0.0),
+       z_axis: Vec4(-0.5891205, 4.293412e-6, 0.8080454, -0.0),
+       w_axis: Vec4(0.0, 0.0, 0.0, 1.0) }</code></pre>
+        First we take the rotation values above,
   <pre><code class="language-rust">Example:
 Mat4 { x_axis: Vec4(1.0, 0.0, 0.0, 0.0),
        y_axis: Vec4(0.0, 0.9999889, 0.0, 0.0),
        z_axis: Vec4(0.0, 0.0, 0.9999904, 0.0),
        w_axis: Vec4(0.001931607, -0.04089581, 0.00318855, 1.0) }</code></pre>
-        Since this is already mostly the identity matrix, this can combine with the default using matrix multiplication.
+        And apply this translation to those rotations.
+        <br><br>
+        The correct transform matrix uses this formula.
+        <pre><code class="language-rust">let transform_matrix = Mat4::from_rotation_translation(
+            default_transform.to_scale_rotation_translation().1,
+            skin.inverse_bind_matrices[i].inverse().w_axis.truncate(),
+        );</code></pre>
+        <div style="text-align: center; font-family: 'Times New Roman', serif; font-size: 1.5rem; font-style: italic; margin: 1rem 0;">
+  T = <span style="font-style: normal;">Transform</span>(R<sub>default</sub>, t<sub>inverse bind</sub>)
+</div>
         </div>
       </div>
     </div>
@@ -463,24 +464,24 @@ Mat4 { x_axis: Vec4(-3.5313367e-6, 1.0, -8.005451e-6, -0.0),
 
   The skeleton hierarchy is stored in the default skeleton. By this point. all joints know their parent and their children. 
   <br>
-  in order to determine the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/agent/src/skeleton.rs#L105">local transforms</a>, a simple calculation is done on each joint. 
+  in order to determine the local transforms, a simple calculation is done on each joint. 
   <div class="bubble small">
-    <h2>Parent</h2> * <h2>Child Inverse</h2>
+    <h2>Parent Inverse</h2> * <h2>Child</h2>
   </div>
   </div>
 <div class="bubble sinister">
   <h1>
     Save JSON
   </h1>
-  Now that we have the full SceneObject and handled its skeleton, we are almost ready for rendering. The rendering component expects the path to an <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.AvatarObject.html">AvatarObject</a> serialized as JSON.
+  Now that we have the full SceneObject and handled its skeleton, we are almost ready for rendering. The rendering component expects the path to an <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/render_data/struct.AvatarObject.html">AvatarObject</a> serialized as JSON.
 <br>
-AvatarObjects contain a serialized <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Skeleton.html">Skeleton</a> object, which represents the global skeleton of the avatar, and a list of paths to the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObjects</a> which contain the vertices and indices of each component mesh. This allows previews to be generated from individual RenderObjects, or outfit objects to be updated, without having to parse or regenerate entire files.
+AvatarObjects contain a serialized <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/skeleton/struct.Skeleton.html">Skeleton</a> object, which represents the global skeleton of the avatar, and a list of paths to the <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/render_data/struct.RenderObject.html">RenderObjects</a> which contain the vertices and indices of each component mesh. This allows previews to be generated from individual RenderObjects, or outfit objects to be updated, without having to parse or regenerate entire files.
 <br>
-The handled object gets <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L73">written to disk</a>, where it will be added to a full AvatarObject once the rest of the outfit has downloaded.
+The handled object gets <a href="https://docs.rs/metaverse_objects/latest/src/metaverse_objects/avatar_asset.rs.html#29">written to disk</a>, where it will be added to a full AvatarObject once the rest of the outfit has downloaded.
 </div>
 <div class="bubble sinister">
   <h1>Agent List</h1>
-  The agent list is the list of all agents visible to the user, including itself. Once an object is ready to be rendered, it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L239">adds it</a> to the list of outfit items in the agent list. 
+  The agent list is the list of all agents visible to the user, including itself. Once an object is ready to be rendered, it <a href="https://docs.rs/metaverse_avatar/latest/src/metaverse_avatar/avatar_object_handler.rs.html#38">adds it</a> to the list of outfit items in the agent list. 
   <br>
 {% capture GlobalSkeleton %}
   <h1>Global Skeleton</h1>
@@ -489,12 +490,12 @@ The handled object gets <a href="https://github.com/benthic-mmo/metaverse_client
   For example, a model might have a "body" object that has custom joint positions for every joint. The player might then have a "shirt" object equipped that has different joint positions for joints that the body has already morphed. Depending on which one loads first, the shirt or the body's transforms might be applied to the global skeleton, and the model will render looking deformed. 
   <br>
   <br>
-  To handle this, each <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Joint.html">joint</a> in the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Skeleton.html">skeleton</a> object stores its transforms as a vector. Each transform then has a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Transform.html#structfield.rank">rank</a> which is <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/agent/src/skeleton.rs#L144">increased</a> when multiple objects load in with the same joint transform values. The Transform vector is organized in order of highest to lowest transform rank, with the highest always being the one that renders.
+  To handle this, each <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/skeleton/struct.Joint.html">joint</a> in the <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/skeleton/struct.Skeleton.html">skeleton</a> object stores its transforms as a vector. Each transform then has a <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/skeleton/struct.Transform.html#structfield.rank">rank</a> which is <a href="https://docs.rs/metaverse_avatar/latest/src/metaverse_avatar/skeleton.rs.html#138">increased</a> when multiple objects load in with the same joint transform values. The Transform vector is organized in order of highest to lowest transform rank, with the highest always being the one that renders.
   <br>
   <br>
   Each time an object is added to an agent through the agent list, the model's transforms are added to the global agent skeleton. 
   {% endcapture %} {% include evil_benthic.html content=GlobalSkeleton %}
 
-  If we have received all of the outfit items required for the model, the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/agent.rs#L259">add_item_to_agent_list()</a>function sends a message to the <a href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CAgent%3E-for-Mailbox">mailbox</a>. This creates the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.AvatarObject.html">AvatarObject</a> from the skeleton and the list of <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObjects</a> stored in the global agent list. It then writes the agent object to disk, and calls <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/skinned_mesh/fn.generate_skinned_mesh.html">generate_skinned_mesh()</a>, passing in the agent object's JSON path. Once the mesh has been written to disk, a model render UI message is sent with a link to the path. 
+  When the final outfit object is added to the avatar from an <a href"https://docs.rs/metaverse_core/latest/metaverse_core/avatar/struct.AddObjectToAvatar.html">AddObjectToAvatar</a> message, a <a href="https://docs.rs/metaverse_core/latest/metaverse_core/avatar/struct.FinalizeAvatar.html">FinalizeAvatar</a> message is dispatched, which calls <a href="https://docs.rs/metaverse_avatar/latest/metaverse_avatar/avatar_object_handler/fn.finalize_avatar.html">finalize_avatar()</a>. This function finalizes the global skeleton by adjusting its local transforms, and creates an AvatarObject containing the finalized skeleton, the json paths to all of the object mesh adat, and the list of used joints.
 </div>
 </div>

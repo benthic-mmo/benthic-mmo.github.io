@@ -31,7 +31,7 @@ title: Terrain
       <p>
         The LayerData is received from the sever from the
         <a
-          href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/udp_handler.rs#L78"
+          href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#method.start_udp_read"
           >udp_read function</a
         >
       </p>
@@ -41,7 +41,7 @@ title: Terrain
       <p>
         The LayerData packet is parsed by the
         <a
-          href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet/struct.Packet.html#method.from_bytes"
+          href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet_protocol/trait.PacketData.html#tymethod.from_bytes"
           >PacketData::from_bytes()</a
         >, determining the stride, size, and type of the contained layers.
       </p>
@@ -51,7 +51,7 @@ title: Terrain
       <p>
         The LayerData packet is received by the mailbox
         <a
-          href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CLayerData%3E-for-Mailbox"
+          href="https://docs.rs/metaverse_core/latest/metaverse_core/environment/struct.HandleLayerData.html"
           >here</a
         >, without fully parsing the body yet.
       </p>
@@ -350,9 +350,7 @@ Bytes:     0    0    0   164  65   1    0    8   96 ...
   <br>
   In order to fill this gap, the client needs to have retreived all of the tiles to the right, to the left, and to the upper top corner between them.
   <br>
-  This is done in the core crate. When it parses a Land patch, it <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/environment.rs#L41">inserts it the patch cache</a>. Unrendered land patckets are added to the patch queue and the total patch list. If the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/environment/src/land.rs#L123">North, East and Top Corner</a> exist in the total patch list, generate mesh retrieves them, and begins the stitching.
-  <br>
-  <a href="https://docs.rs/metaverse_environment/latest/metaverse_environment/generate_triangles/fn.generate_mesh_with_indices.html">Generate_mesh_with_indices()</a> follows a simple algorithm to convert the heightmap data into vertices with corresponding indices. Once the mesh has been created, <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/environment/src/generate_triangles.rs#L100">stitch_patches_with_indices()</a> is called, which adds the geometry between the gaps in the patches. 
+  This is done in the core crate. When it parses a Land patch, it <a href="https://docs.rs/metaverse_environment/latest/src/metaverse_environment/layer_handler.rs.html#54">inserts it the patch cache</a>. Unrendered land patckets are added to the patch queue and the total patch list. If the <a href="https://docs.rs/metaverse_environment/latest/src/metaverse_environment/land.rs.html#67">North, East and Top Corner</a> exist in the total patch list, a <a href="https://docs.rs/metaverse_environment/latest/src/metaverse_environment/terrain_mesh_builder.rs.html#104">stitching</a> algorithm is applied, and <a href="https://docs.rs/metaverse_environment/latest/metaverse_environment/terrain_mesh_builder/fn.build_terrain.html">build_terrain()</a> creates a RenderObject to send to the UI to display.  
 
   <br>
   <br>

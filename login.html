@@ -66,55 +66,55 @@ title: Login
   </p>
   <div class="bubble-row">
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.first">
+      href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/login_event/struct.Login.html#structfield.first">
       <div class="bubble tertiary small">
         First Name
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.last">
+      href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/login_event/struct.Login.html#structfield.last">
       <div class="bubble tertiary small">
         Last Name
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.passwd">
+      href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/login_event/struct.Login.html#structfield.passwd">
       <div class="bubble tertiary small">
         Password
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.start">
+      href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/login_event/struct.Login.html#structfield.start">
       <div class="bubble tertiary small">
         Start
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.channel">
+      href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/login_event/struct.Login.html#structfield.Channel">
       <div class="bubble tertiary small">
         Channel
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/login/login_xmlrpc/struct.Login.html#structfield.agree_to_tos">
+      href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/login_event/struct.Login.html#structfield.agree_to_tos">
       <div class="bubble tertiary small">
         Agree To TOS
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.read_critical">
+      href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/login_event/struct.Login.html#structfield.read_critical">
       <div class="bubble tertiary small">
         Read Critical
       </div>
     </a>
     <a
-      href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html#structfield.url">
+      href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/login_event/struct.Login.html#structfield.url">
       <div class="bubble tertiary small">
         URL
       </div>
     </a>
   </div>
-    Though this is all the information you need from the user, this is not all the information you'll need to create a valid LoginRequest XML. This information is collected from the user in the UI and sent to the core as a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/message/enum.UIResponse.html">UIResponse</a>. More information about core and UI communication can be found <a href="/core">here</a>.
+    Though this is all the information you need from the user, this is not all the information you'll need to create a valid LoginRequest XML. This information is collected from the user in the UI and sent to the core as a <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/ui_messages/enum.UIResponse.html">UIResponse</a>. More information about core and UI communication can be found <a href="/core">here</a>.
     <br>
   <br>
     An example login would look something like this.
@@ -135,8 +135,8 @@ let login_data = Login {
   <h2>Start Field</h2>
   <p>
     While most of the login struct can be anything, the Start field can only be set with specific values. These can be
-    "home", "last", and coordinates in the format "uri:[region-name]&[x-coord]&[y-coord]&[z-coord]". For example, the
-    string "uri:test&128&128&0" places the user in the center of a region called "test". if the start is not set to
+    "home", "last", and coordinates in the format <code class="good">"uri:[region-name]&[x-coord]&[y-coord]&[z-coord]"</code>. For example, the
+    string <code class="good">"uri:test&128&128&0"</code> places the user in the center of a region called "test". if the start is not set to
     one of these options, the server will respond with
   <pre><code>Error generating Login Response</code></pre>
   which is very difficult to debug.
@@ -153,7 +153,7 @@ let login_data = Login {
   <br>
   <br>
   The first thing that must happen is the raw <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/ui/login_event/struct.Login.html">Login</a>
+    href="https://docs.rs/benthic_protocol/latest/benthic_protocol/messages/ui/login_event/struct.Login.html">Login</a>
   data must be converted to XML-RPC that can be sent to the login
   server. The first step of this is done by creating a new <a
     href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/simulator_login_protocol/struct.SimulatorLoginProtocol.html">SimulatorLoginProtocol</a> object from the Login UIResponse.<br>
@@ -164,7 +164,7 @@ let login_data = Login {
   <hr>
   Now that we have a <a
     href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/simulator_login_protocol/struct.SimulatorLoginProtocol.html">SimulatorLoginProtocol</a>
-  object, we can serialize that into xml-rpc using the <a href="https://github.com/benthic-mmo/serde-llsd/blob/main/src/ser/xml_rpc.rs">serde-llsd-benthic</a> crate, and send it to the url included
+  object, we can serialize that into xml-rpc using the <a href="https://docs.rs/serde-llsd-benthic/latest/serde_llsd_benthic/">serde-llsd-benthic</a> crate, and send it to the url included
   in the login.
   <a
     href="https://docs.rs/metaverse_core/latest/metaverse_core/transport/http_handler/fn.login_to_simulator.html">
@@ -173,7 +173,7 @@ let login_data = Login {
 </div>
 <div class="bubble extra_sinister">
   <h1 id="3">Handle LoginResponse</h1>
-  Once the post request is sent, the response is <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/http_handler.rs#L29">awaited</a>, and the response <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/http_handler.rs#L37">parsed</a>. The resulting login response is contained in the enum <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/enum.LoginStatus.html">LoginStatus</a>, which can contain both a success and a failure. On success, a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html">LoginResponse</a> object is created, which contains all of the fields necessary for running a full metaverse client.
+  Once the post request is sent, the response is <a href="https://docs.rs/metaverse_core/latest/src/metaverse_core/transport/http_handler.rs.html#51">retrieved</a>, and the response <a href="https://docs.rs/metaverse_core/latest/src/metaverse_core/transport/http_handler.rs.html#66">parsed</a>. The resulting login response is contained in the enum <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/enum.LoginStatus.html">LoginStatus</a>, which can contain both a success and a failure. On success, a <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html">LoginResponse</a> object is created, which contains all of the fields necessary for running a full metaverse client.
   <br>
   There are many fields in the LoginResponse object that are unused, or are unknown what their function once was. Only a small subset of the struct is used by the server to establish the session.
   <br> 
@@ -217,8 +217,8 @@ let login_data = Login {
   Now that we have the LoginResponse, we have all the information we need to complete the authentication handshake.
   <br>
   The LoginResponse data is used to create a <a
-    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Session.html">Session</a>
-  object <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/session.rs#L369">here</a>. This is sent to the mailbox, to set the global values that are required throughout the runtime. The session object is then handled by the <a
+    href="https://docs.rs/benthic_protocol/latest/benthic_protocol/session/struct.Session.html">Session</a>
+  object <a href="https://docs.rs/metaverse_core/latest/src/metaverse_core/session.rs.html#531">here</a> as part of the immediate initialization after login. This is sent to the mailbox, to set the global values that are required throughout the runtime. The session object is then handled by the <a
     href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CSession%3E-for-Mailbox">mailbox</a>,
   which opens up another UDP socket which asyncronously listens for events coming from the server, using the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.sim_ip">sim_ip</a> and <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/login/login_response/struct.LoginResponse.html#structfield.sim_port">sim_port</a> provided by the login response.
   <hr>
@@ -260,7 +260,7 @@ let login_data = Login {
   contact between the server and the client. This is the first UDP packet that must be sent before any other
   communication is possible.
   <hr>
-  This is sent to the <a href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/core/src/core_subscriber.rs#L163">mailbox</a>, which handles it as an outgoing packet and <a href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/session.rs#L297">sends</a> it to the server via UDP using the URL and socket that were retrieved from the LoginResponse.
+  This is <a href="https://docs.rs/metaverse_core/latest/src/metaverse_core/session.rs.html#604">sent</a> to the mailbox as part of the immediate login session initialization, which handles it as an <a href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.OutgoingPacket.html">outgoing packet</a>. it to the server via UDP using the URL and socket that were retrieved from the LoginResponse.
 </div>
 <div class="bubble contrast">
   <h1 id="5">RegionHandshake</h1>
@@ -313,13 +313,11 @@ let login_data = Login {
       </ul>
     </div> 
   </div>
-  After receiving this packet, it must be replied to with a 
-  <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake_response/">RegionHandshakeResponse</a> packet. 
 </div>
 <div class="bubble sinister">
-  <h1 id="5">RegionHandshakeResponse</h1>
+  <h1 id="5">RegionHandshakeReply</h1>
   After receiving the <a
-    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake">Region Handshake</a> packet, the viewer must reply with the    <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake_response/">RegionHandshakeResponse</a> packet. This will promote the agent from a child to a root agent, allowing for full ObjectUpdate packets to be received, and the player to move around. 
+    href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake">Region Handshake</a> packet, the viewer must reply with the    <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/core/region_handshake_reply/index.html">RegionHandshakeReply</a> packet. This will promote the agent from a child to a root agent, allowing for full ObjectUpdate packets to be received, and the player to move around. 
 </div>
 <div class="bubble sinister">
   <h1 id="6">Establish Ping</h1>
@@ -333,7 +331,7 @@ let login_data = Login {
     <br>
     <br>
     When the mailbox <a
-      href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CPing%3E-for-Mailbox">receives
+      href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.HandlePing.html">receives
       a ping packet</a>, it automatically responds, which is then used to calculate the latency from the server and the
     client.
     <br>

@@ -29,12 +29,12 @@ title: Packets
         <p>
           The raw data is then converted to a
           <a
-            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet/struct.Packet.html"
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet_protocol/struct.Packet.html"
             >Packet</a
           >
           object using the packet's
           <a
-            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet/struct.Packet.html#method.from_bytes"
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/packet_protocol/struct.Packet.html#method.from_bytes"
             >from_bytes</a
           >
           function.
@@ -43,12 +43,7 @@ title: Packets
       <div class="bubble contrast small">
         <h1>3.</h1>
         <p>
-          The packet's from_bytes functon
-          <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/messages/src/packet/packet.rs#L36"
-            >then</a
-          >
-          tries to parse the
+          The packet's from_bytes functon then tries to parse the
           <a
             href="https://docs.rs/metaverse_messages/latest/metaverse_messages/packet/header/index.html"
             >Header</a
@@ -62,7 +57,7 @@ title: Packets
           Handle edgecases like if the packet has no body, or if the packet
           header tells you the packet body is
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/messages/src/packet/packet.rs#L64"
+            href="https://docs.rs/metaverse_messages/latest/src/metaverse_messages/packet/packet_protocol.rs.html#72"
             >zerocoded</a
           >.
         </p>
@@ -270,12 +265,12 @@ title: Packets
   <br />
   When a reliable packet is received, the core will immediately
   <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/transport/udp_handler.rs#L34"
+    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.AddToAckList.html"
     >add the packet's sequence number</a
   >
   to the ack list. The mailbox is then triggered to
   <a
-    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CSendAckList%3E-for-Mailbox"
+    href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.SendAckList.html"
     >send the list</a
   >.
 </div>

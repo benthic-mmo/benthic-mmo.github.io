@@ -35,12 +35,12 @@ title: Inventory
         <p>
           The initialization function
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/session.rs#L449"
+            href="https://docs.rs/metaverse_core/latest/src/metaverse_core/session.rs.html#665"
             >triggers</a
           >
           a
           <a
-            href="https://docs.rs/metaverse_core/latest/metaverse_core/session/struct.Mailbox.html#impl-Handler%3CRefreshInventoryEvent%3E-for-Mailbox"
+            href="https://docs.rs/metaverse_core/latest/metaverse_core/inventory/struct.RefreshInventoryEvent.html"
             >RefreshInventoryEvent</a
           >
           for the user's AgentID which is also returned from the LoginResponse.
@@ -52,7 +52,7 @@ title: Inventory
         <p>
           The RefreshInventoryEvent
           <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7586490c87ca4e001d811be20673fc9b00e2a550/crates/core/src/inventory.rs#L50"
+            href="https://docs.rs/metaverse_core/latest/src/metaverse_core/inventory.rs.html#55"
             >waits</a
           >
           until the capability URL has returned from the initial capability
@@ -65,7 +65,7 @@ title: Inventory
           Make a request to the capability endpoint, using the sesion's
           inventory_root to make a
           <a
-            href="https://docs.rs/metaverse_inventory/latest/metaverse_inventory/inventory_root/struct.FolderRequest.html"
+            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/folder_request/struct.FolderRequest.html"
             >FolderRequest</a
           >, to make a request to
           <a
@@ -77,18 +77,7 @@ title: Inventory
       <div class="bubble contrast small">
         <h2>5.</h2>
         <p>
-          <a
-            href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/inventory/src/inventory_root.rs#L86"
-            >Establish_inventory_dirs()</a
-          >
-          creates folders on disk to represent the user's inventory structure, and handles the item metadata.
-          It then recursively calls
-          <a
-            href="https://docs.rs/metaverse_inventory/latest/metaverse_inventory/inventory_root/fn.refresh_inventory.html"
-            >refresh_inventory()</a
-          >
-          on each of the subdirectories, creating more FolderRequests to the
-          capability endpoint. 
+          The retrieved inventory is built in a sqlite database on disk, sending <a href="https://docs.rs/metaverse_inventory/latest/src/metaverse_inventory/inventory_root.rs.html#19">recursive calls</a> until the entire hierarchy is present.
         </p>
       </div>
     </div>
@@ -97,42 +86,27 @@ title: Inventory
 
 <div class="bubble">
   <h1>Item Metadata</h1>
-  The
-  <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/inventory/src/inventory_root.rs#L86"
-    >establish_inventory_dirs()</a
-  >
-  function reads the folder data and generates the objects received from the endpoint
-  <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/inventory/src/inventory_root.rs#L93"
-    >here</a
-  >.
-  <br />
-  <br />
-  The
-  <a
-    href="https://github.com/benthic-mmo/metaverse_client/blob/7dff92943d2660b118346c77fddcd70b6b436631/crates/messages/src/capabilities/folder_types.rs#L92"
-    >Folder::from_llsd()</a
-  >
-  function prarses the LLSD-XML and retreives the
-  <a
+  The <a href="https://docs.rs/metaverse_inventory/latest/metaverse_inventory/inventory_root/fn.refresh_inventory.html">refresh inventory</a>'s recursive function reads the folder data retrieved from the endpoint <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/folder_types/struct.Folder.html#method.from_llsd">from llsd</a>. This folder object contains the folder, and   <a
     href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/item_metadata/struct.ItemMetadata.html"
     >item metadata</a
-  >
-  from the LLSD. This contains a minimal amount of information about the item
-  object, such as the permissions, name, asset ID, description and type. These
+  > of the objects in the folder.<br><br>
+This contains a minimal amount of information about the folder's item
+  objects, such as the permissions, name, asset ID, description and type. These
   fields can be used to retreive the full item's data from the server using a
-  different endpoint, and are saved to the session under the Folder object.
-  <hr />
-  At this point, the inventory's directory structure is populated, and contains
-  the user's inventory objects. The folders are stored on-disk in a sqlite DB, which can be searched quickly without having to waste RAM on the folder structure.  
+  different endpoint.
+  <a
+    href="https://docs.rs/metaverse_inventory/latest/metaverse_inventory/inventory_root/fn.insert_folder.html"
+    >insert_folder()</a> is then called to add the folder and item metadata the sqlite db. <br><br> 
+  It then calls <a href="https://docs.rs/metaverse_inventory/latest/metaverse_inventory/inventory_root/fn.insert_items.html">insert_items()</a>, and then <a href="https://docs.rs/metaverse_inventory/latest/metaverse_inventory/inventory_root/fn.insert_categories.html">insert_categories()</a>. 
+  <br />
+  <br />
+  At this point, the inventory's sqlite database is populated, and contains
+  the user's inventory object metadata. 
 </div>
 
 <div class="bubble">
   <h1>Folder Requests</h1>
-  The user's folders are requested from the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.FetchInventoryDescendents2">FetchInventoryDescendents2</a> endpoint,
-  whereas other user's folders are requested from the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.FetchLibDescendents2">FetchLibDescendents2</a>
-  endpoint (for things like rendering other players' models).
+  The user's folders are requested from the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/http/capabilities/enum.Capability.html#variant.FetchInventoryDescendents2">FetchInventoryDescendents2</a> 
   <br />
   The XML for the request is structured like so
 

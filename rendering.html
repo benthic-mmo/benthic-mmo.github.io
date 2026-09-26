@@ -7,36 +7,36 @@ title: Renderin
 <div class="bubble">
   <h1>Rendering</h1>
   Model generation is handled by the
-  <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/index.html">metaverse_mesh</a>
+  <a href="https://docs.rs/crate/metaverse_mesh/latest">metaverse_mesh</a>
   crate.
   <br />
   Its main entrypoint is through the
   <a
-    href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/skinned_mesh/fn.generate_skinned_mesh.html"
+    href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/mesh/generate/fn.generate_skinned_mesh.html"
     >generate_skinned_mesh()</a
   >
 
   function. It also has C and C# wrappers, called
   <a
-    href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/skinned_mesh/fn.generate_skinned_mesh_legacy.html"
+    href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/mesh/generate/fn.generate_skinned_mesh_legacy.html"
     >generate_skinned_mesh_legacy</a
   >.
   <br />
     <div class="bubble tertiary">
       <h2>
         <a
-          href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/skinned_mesh/fn.generate_skinned_mesh.html"
+          href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/mesh/generate/fn.generate_skinned_mesh.html"
           >Generate Skinned Mesh</a
         >
       </h2>
       <div class="bubble">
         <h2>
           <a
-            href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.AvatarObject.html"
+            href="https://docs.rs/benthic_protocol/latest/benthic_protocol/render_data/struct.AvatarObject.html"
             >AvatarObject</a
           >
         </h2>
-        The function accepts an AvatarObject, which contains one JSON serialized <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/skeleton/struct.Skeleton.html">skeleton</a> object, and a list of paths to its component <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObjects</a>.
+        The function accepts an AvatarObject, which contains one JSON serialized <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/skeleton/struct.Skeleton.html">skeleton</a> object, and a list of paths to its component <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/render_data/struct.RenderObject.html">RenderObjects</a>.
         <br />
         <pre><code class="language-rust">AvatarObject
 
@@ -58,7 +58,7 @@ title: Renderin
         </code></pre>
 
               <div class="bubble sinister">
-        <h2><a href="https://docs.rs/metaverse_messages/0.2.0/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObject</a></h2>
+        <h2><a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/utils/render_data/struct.RenderObject.html">RenderObject</a></h2>
         The RenderObject contains the mesh data and local skeleton for each component object.
         <pre><code class="language-rust">RenderObject
 
@@ -78,7 +78,7 @@ title: Renderin
 
   </div>
   Example rust usage of this crate can be found in the
-  <a href="https://github.com/benthic-mmo/metaverse_gltf/tree/main/tests"
+  <a href="https://github.com/benthic-mmo/metaverse_mesh/tree/main/tests"
     >tests</a
   >
   directory.

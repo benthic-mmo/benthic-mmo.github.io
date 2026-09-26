@@ -113,8 +113,7 @@ title: Main
 <div class="bubble">
   <h1>Getting Started</h1>
   <p>
-  <h3>The benthic project stretches across several repos, containing several different crates. There are four primary
-    crates that contain the majority of the project's code.</h3>
+  <h3>The benthic project stretches across several repos, containing several different crates. There are five repositories that must that are required to build and test the project.</h3>
   <div class="bubble-row">
     <div class="bubble contrast">
       <a href="https://github.com/benthic-mmo/metaverse_client">
@@ -144,6 +143,11 @@ title: Main
         <h1>Serde LLSD</h1>
       </a> A fork of John Nagle's <a href="https://github.com/John-Nagle/serde-llsd">serde-llsd</a>, containing extra serializing and deserializing functions that include non-documented protocols, and somewhat niche types used by the project like XMLRPC. 
     </div>
+    <div class="bubble contrast">
+      <a href="https://github.com/benthic-mmo/benthic_default_assets">
+        <h1>Benthic Default Assets</h1>
+      </a> The collection of default assets used by the Benthic project. 
+    </div>
   </div>
   <br>
   The recommended project layout for developing looks like this:
@@ -152,6 +156,7 @@ benthic_project/
   ├── metaverse_client/
   ├── metaverse_gltf/
   ├── benthic_viewer/
+  ├── benthic_default_assets/ 
   └── serde-llsd/
 
 OpenSimulator
