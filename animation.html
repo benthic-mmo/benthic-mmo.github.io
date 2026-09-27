@@ -71,7 +71,9 @@ title: Animation
       <div class="bubble contrast small">
         <h2>2.</h2>
         <p>
-          The retargeting function <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/animation/retarget/fn.apply_joint_scale.html">apply_joint_scale()</a> is run on the AnimationClip. This performs the algorithm described <a href="https://turanszkij.wordpress.com/2022/09/23/animation-retargeting/">here</a>. 
+          The retargeting function <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/animation/retarget/fn.apply_joint_scale.html">apply_joint_scale()</a> is run on the AnimationClip. This performs the algorithm described <a href="https://turanszkij.wordpress.com/2022/09/23/animation-retargeting/">here</a>.
+<br><br>
+          The algorithm is effectively a process of determining the local transform of the keyframe, converting that local transform to a delta from the bind pose, and then applying that delta to the target skeleton before converting back to local space. 
           </p>
       </div>
     </div>
