@@ -1,0 +1,82 @@
+---
+layout: default
+title: Animation
+---
+
+<div class = "bubble">
+<h1>Animations</h1>
+
+<p>Open metaverse projects need to make heavy use of animation retargeting. Any animation could be playing on any kind of model, with any kind of scale and deformation.</p>
+  <div class="center">
+    <div class="bubble-column" style="max-width: 1000px">
+      <div class="bubble contrast small">
+        <h2>1.</h2>
+        <p>
+  The process begins with an <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/agent/avatar_animation/struct.AvatarAnimation.html">AvatarAnimation</a> packet being received from the server. 
+        </p>
+      </div>
+    <div class="bubble contrast small">
+        <h2>2.</h2>
+        <p> a 
+          <a href="https://docs.rs/metaverse_core/latest/metaverse_core/avatar/struct.HandleNewAvatarAnimation.html">HandleNewAvatarAnimation</a> packet is sent 
+         in response, which checks the target avatar for readiness. </p>
+      </div>
+    <div class="bubble contrast small">
+        <h2>3.</h2>
+        <p> 
+          If the avatar is ready, <a href="https://docs.rs/metaverse_avatar/latest/metaverse_avatar/animation/fn.build_animation.html">build_animation()</a> is called. This loops through every animation in the <a href="https://docs.rs/metaverse_messages/latest/metaverse_messages/udp/agent/avatar_animation/struct.AnimationEntry.html">AnimationEntry</a>.
+        </p>
+      </div>
+
+      <div class="bubble contrast small">
+        <h2>3.</h2>
+        <p>
+          The animation's UUID is checked against the list of <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/default_animations/enum.DefaultAnimation.html">Default Animations</a>. Default animations are expected to be pre-downloaded by the client, and are stored as GLTF in the <a href="https://github.com/benthic-mmo/benthic_default_assets/tree/main/Animations">Animations</a> dir of the default assets repo.
+        </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>4.</h2>
+        <p>
+          Benthic checks if a version of this animation has already been generated and cached for this skeleton. If it has, it uses that skeleton to <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/animation/generate/fn.retarget_filtered_gltf_animation.html">build the retargeted animation</a>. If not, it creates both a filtered json <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/animation/generate/fn.retarget_gltf_animation.html">and a player-custom AnimationClip json</a>. 
+
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class = "bubble">
+<h1>Animation Retargeting</h1>
+
+  Animations are represented in Benthic as <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/default_animations/struct.AnimationClip.html">AnimationClips</a>. These contain the bind skeleton of the animation, along with a vector of <a href="https://docs.rs/benthic_protocol/latest/benthic_protocol/default_animations/struct.JointAnimation.html">JointAnimations</a>, containing the joint name and animation qualities per keyframe.
+  <br>
+  <br> 
+  When moving from an animation from one skeleton to another, the only important transform is the root joint, which determines the root movement of the model. All other motions can be prepresented purely as rotations.
+
+  <div class="center">
+    <div class="bubble-column" style="max-width: 1000px">
+      <div class="bubble contrast small">
+        <h2>1.</h2>
+        <p>
+      The <a href="https://docs.rs/metaverse_mesh/latest/src/metaverse_mesh/animation/generate.rs.html#55">AnimationClip</a> has its <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/animation/retarget/fn.filter_bind_skeleton.html">bind skeleton</a> and <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/animation/retarget/fn.filter_animation_keyframes.html">keyframes</a> filtered. In order to retarget from one skeleton to another, they must possess the exact same bone hierarchy. The target skeleton's list of used bones is used as the filter.
+          </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>2.</h2>
+        <p>
+          The filtered AnimationClip is written to disk to build a cache of common bone layouts, to prevent regenerating unnecessarily.
+          </p>
+      </div>
+      <div class="bubble contrast small">
+        <h2>2.</h2>
+        <p>
+          The retargeting function <a href="https://docs.rs/metaverse_mesh/latest/metaverse_mesh/animation/retarget/fn.apply_joint_scale.html">apply_joint_scale()</a> is run on the AnimationClip. This performs the algorithm described <a href="https://turanszkij.wordpress.com/2022/09/23/animation-retargeting/">here</a>. 
+          </p>
+      </div>
+    </div>
+  </div>
+
+  The result of all of these operations is a GLTF file that contains a fully filtered and retargeted animation. This animation file can be loaded into your UI programs, and applied directly to your avatar.
+</div>
+
